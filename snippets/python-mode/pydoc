@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: pydoc
+# key: ""
+# --
+""" $0
+"""
