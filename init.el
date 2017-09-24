@@ -82,6 +82,7 @@ Return a list of installed packages or nil for every skipped package."
                           'js2-mode
                           'json-mode
                           'feature-mode
+                          ;; New packages below this line
                           'company
                           'company-web
                           'company-tern
@@ -422,10 +423,6 @@ If ARGPOS is not specified insert will happen at point."
       helm-ff-file-name-history-use-recentf t)
 
 (helm-mode 1)
-
-(setq helm-for-files-preferred-list (list helm-source-files-in-current-dir
-                                          helm-source-recentf
-                                          helm-source-buffers-list))
 
 ;; Helm M-x
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -956,21 +953,6 @@ If ARGPOS is not specified insert will happen at point."
 (evil-define-key 'normal messages-buffer-mode-map (kbd "gt") 'eyebrowse-next-window-config)
 
 ;;; Dired Mode Mappings
-(evil-define-key 'normal dired-mode-map (kbd "o") 'dired-find-alternate-file)
-(evil-define-key 'normal dired-mode-map (kbd "RET") 'dired-find-alternate-file)
-(evil-define-key 'normal dired-mode-map (kbd "u") 'zz-dired-up-directory)
-(evil-define-key 'normal dired-mode-map (kbd "C-r") 'revert-buffer)
-(evil-define-key 'normal dired-mode-map (kbd "r") 'dired-do-redisplay)
-(evil-define-key 'normal dired-mode-map (kbd "k") 'dired-next-line)
-(evil-define-key 'normal dired-mode-map (kbd "j") 'dired-previous-line)
-(evil-define-key 'normal dired-mode-map (kbd "M-{") 'evil-prev-buffer)
-(evil-define-key 'normal dired-mode-map (kbd "M-}") 'evil-next-buffer)
-(evil-define-key 'normal dired-mode-map (kbd "<tab>") 'dired-subtree-toggle)
-(evil-define-key 'normal dired-mode-map (kbd "<backtab>") 'dired-subtree-cycle)
-(evil-define-key 'normal dired-mode-map (kbd "gb") 'evil-buffer)
-(evil-define-key 'normal dired-mode-map (kbd "gt") 'eyebrowse-next-window-config)
-
-
 (progn
   ;; Define prefix keymap (for custom dired mappings)
   (define-prefix-command 'zz-dired-mode-key-map)
@@ -988,7 +970,24 @@ If ARGPOS is not specified insert will happen at point."
   ;;(define-key zz-dired-mode-key-map (kbd "v") 'dired-verify-this-file)
   )
 
-(define-key dired-mode-map (kbd "m") zz-dired-mode-key-map)
+(eval-after-load "dired"
+  '(progn
+     (define-key dired-mode-map (kbd "m") zz-dired-mode-key-map)
+
+     (evil-define-key 'normal dired-mode-map (kbd "o") 'dired-find-alternate-file)
+     (evil-define-key 'normal dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+     (evil-define-key 'normal dired-mode-map (kbd "u") 'zz-dired-up-directory)
+     (evil-define-key 'normal dired-mode-map (kbd "C-r") 'revert-buffer)
+     (evil-define-key 'normal dired-mode-map (kbd "r") 'dired-do-redisplay)
+     (evil-define-key 'normal dired-mode-map (kbd "k") 'dired-next-line)
+     (evil-define-key 'normal dired-mode-map (kbd "j") 'dired-previous-line)
+     (evil-define-key 'normal dired-mode-map (kbd "M-{") 'evil-prev-buffer)
+     (evil-define-key 'normal dired-mode-map (kbd "M-}") 'evil-next-buffer)
+     (evil-define-key 'normal dired-mode-map (kbd "<tab>") 'dired-subtree-toggle)
+     (evil-define-key 'normal dired-mode-map (kbd "<backtab>") 'dired-subtree-cycle)
+     (evil-define-key 'normal dired-mode-map (kbd "gb") 'evil-buffer)
+     (evil-define-key 'normal dired-mode-map (kbd "gt") 'eyebrowse-next-window-config)))
+
 
 ;;=============================================================================
 ;; Evil leader
