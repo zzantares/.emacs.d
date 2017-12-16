@@ -300,6 +300,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package general
   :ensure t
   :config
+  (general-evil-setup)
   (general-define-key :states 'motion "M-," 'zz-preferences)
   (general-define-key :states 'normal :prefix "SPC"
                       "ff" 'find-file
@@ -1107,6 +1108,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (add-hook 'python-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 79))))
 
 (use-package dired
+  :defer t
   :commands (auto-revert-mode zz-dired-sort-directories-first)
   :init
   (add-hook 'dired-mode-hook 'auto-revert-mode)
@@ -1114,26 +1116,32 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config
   (setq dired-dwim-target t)
   (put 'dired-find-alternate-file 'disabled nil)
+  (evil-define-key 'normal dired-mode-map
+    zz-motion-left nil
+    zz-motion-right nil
+    zz-motion-up 'dired-previous-line
+    zz-motion-down 'dired-next-line)
   :general
   (:keymaps 'normal
             :prefix "SPC"
             "tt" 'zz-toggle-dired)
-  (:keymaps 'dired-mode-map
-            zz-motion-up 'dired-previous-line
-            zz-motion-down 'dired-next-line
-            "o" 'dired-find-alternate-file
-            "RET" 'dired-find-alternate-file
-            "u" 'zz-dired-up-directory
-            "C-r" 'revert-buffer
-            "C-p" 'zz-find-file
-            "r" 'dired-do-redisplay
-            "gb" 'evil-buffer
-            "M-{" 'evil-prev-buffer
-            "M-}" 'evil-next-buffer
-            "mc" 'dired-do-copy
-            "mm" 'dired-do-rename
-            "ma" 'dired-create-directory
-            "md" 'dired-do-delete))
+  ;; (:keymaps 'dired-mode-map
+  ;;           zz-motion-up 'dired-previous-line
+  ;;           zz-motion-down 'dired-next-line
+  ;;           "o" 'dired-find-alternate-file
+  ;;           "RET" 'dired-find-alternate-file
+  ;;           "u" 'zz-dired-up-directory
+  ;;           "C-r" 'revert-buffer
+  ;;           "C-p" 'zz-find-file
+  ;;           "r" 'dired-do-redisplay
+  ;;           ;; "gb" 'evil-buffer
+  ;;           "M-{" 'evil-prev-buffer
+  ;;           "M-}" 'evil-next-buffer
+  ;;           "mc" 'dired-do-copy
+  ;;           "mm" 'dired-do-rename
+  ;;           "ma" 'dired-create-directory
+  ;;           "md" 'dired-do-delete)
+  )
 
 (use-package dired-subtree
   :ensure t
