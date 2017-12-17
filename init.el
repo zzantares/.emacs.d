@@ -1080,7 +1080,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; ===================================================
 
 (use-package org
-  :straight (org :type git :repo "http://orgmode.org/cgit.cgi/org-mode.git/")
   :config
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (setq org-log-done t
