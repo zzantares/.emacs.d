@@ -5,14 +5,9 @@
 ;; TODO: Quoting lambdas doesn't let compiler to compile them, it seems is not necessary.
 ;; TODO: Zshell is not working right.
 ;; TODO: Use evil-window-map to define the C-w mappings.
-;; TODO: Use evil-add-hjkl-bindings KEYMAP STATE &rest BINDINGS to make evil
-;;       work on compilation-mode-map and Info-mode-map.
-;; TODO: :general :keymaps is not working, an example is dired-mode-map
-;;       navigation keys.
 ;; TODO: Explore the no-littering package.
-;; TODO: Manage packages with straight.el to have reproducible configurations.
 ;; TODO: Make that if cursor is at the end M-v is paste after, otherwise is paste before.
-;; TODO: Adopt use-package's :hook keyword
+;; TODO: Adopt the usage of use-package's :hook keyword
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
 
 ;;(package-initialize)
@@ -448,6 +443,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 	    "tt" 'zz-toggle-dired))
 
 (use-package dired-subtree
+  :after dired
+  :demand t
   :config
   (general-evil-define-key 'normal dired-mode-map
     "<tab>" 'dired-subtree-toggle
@@ -617,6 +614,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
           evil-forward-word-begin
           evil-scroll-donw
           evil-backward-char
+          evil-previous-line
           evil-next-line
           evil-scroll-up
           save-buffers-kill-terminal
@@ -707,13 +705,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             "e" 'flycheck-next-error))
 
 (use-package smartparens
-  :defer 1
+  :defer 3
   :commands smartparens-mode
   :init
   (add-hook 'prog-mode-hook #'smartparens-mode)
   :config
   (require 'smartparens-config)
-  (show-smartparens-global-mode)
   (sp-with-modes 'emacs-lisp-mode
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" "'" :when '(sp-in-string-p sp-in-comment-p)))
@@ -743,6 +740,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-vimish-fold
   :after vimish-fold
+  :demand t
   :config
   (evil-vimish-fold-mode 1)
   :general
@@ -762,12 +760,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package window-numbering
   :after spaceline
+  :demand t
   :config
   (window-numbering-mode t)
   (setq spaceline-window-numbers-unicode t))
 
 (use-package eyebrowse
   :after spaceline
+  :demand t
   :config
   (eyebrowse-mode t)
   (eyebrowse-setup-opinionated-keys)
@@ -792,6 +792,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package nyan-mode
   :if (display-graphic-p)
   :after spaceline
+  :demand t
   :config
   (nyan-mode t)
   (setq nyan-animate-nyancat t
@@ -799,6 +800,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package fancy-battery
   :after spaceline
+  :demand t
   :config
   (fancy-battery-mode)
   (setq fancy-battery-show-percentage t))
@@ -829,6 +831,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package evil-anzu
   :after evil
+  :demand t
   :config
   (setq anzu-cons-mode-line-p nil))
 
@@ -836,7 +839,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package all-the-icons-dired
   :commands all-the-icons-dired-mode
-  :after all-the-icons
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
@@ -879,7 +881,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (add-hook 'markdown-mode-hook (lambda () (turn-on-auto-fill) (set-fill-column 80)))
   (add-hook 'org-mode-hook (lambda () (turn-on-auto-fill) (set-fill-column 80)))
   (add-hook 'prog-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 80)))
-  (add-hook 'python-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 79))))
+  (add-hook 'python-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 79)))
+  :general
+  (:states 'normal :keymaps 'messages-buffer-mode-map
+           "q" 'evil-buffer
+           "<escape>" 'evil-buffer))
 
 (use-package emmet-mode
   :commands emmet-mode
@@ -898,7 +904,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package help-mode
   :straight nil
-  :after evil
   :init
   (add-hook 'help-mode-hook
             '(lambda ()
@@ -971,6 +976,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             :prefix "SPC" "rr" 'browse-url-of-file))
 
 (use-package rbenv
+  :commands global-rbenv-mode
   :init
   (add-hook 'ruby-mode-hook 'global-rbenv-mode)
   :config
@@ -1024,6 +1030,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (add-hook 'go-mode-hook 'go-eldoc-setup))
 
 (use-package company
+  :defer 5
   :config
   (global-company-mode)
   (company-tng-configure-default)
@@ -1034,12 +1041,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :hook (company-mode . company-statistics-mode))
 
 (use-package company-web
+  :commands company-mode
   :init
   (add-hook 'web-mode-hook (lambda ()
                              (set (make-local-variable 'company-backends) '(company-web-html))
                              (company-mode t))))
 
 (use-package company-tern
+  :commands company-mode
   :init
   (add-hook 'js2-mode-hook '(lambda ()
                               (set (make-local-variable 'company-backends) '(company-tern))
@@ -1117,14 +1126,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package org-bullets
   :after org
+  :demand t
   :config
   (org-bullets-mode 1))
 
 (use-package ox-gfm
-  :after org)
+  :after org
+  :demand t)
 
 (use-package ox-reveal
   :after org
+  :demand t
   :config
   (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"
         org-reveal-mathjax t))
