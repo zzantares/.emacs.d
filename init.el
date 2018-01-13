@@ -311,7 +311,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       "ha" 'apropos-command
                       "hd" 'apropos-documentation
                       "hi" 'info)
-  (general-define-key :keymaps 'normal :prefix "SPC"
+  (general-define-key :keymaps '(normal visual) :prefix "SPC"
                       "ln" 'linum-mode
                       "ta" 'align-regexp))
 
@@ -345,7 +345,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
       zz-motion-left 'evil-backward-char
       zz-motion-right 'evil-forward-char
       "<escape>" 'keyboard-quit
-      "ga" 'zz-file-stats
 
       ;; Windows
       (concat "C-w " zz-motion-down) 'evil-window-down
@@ -364,6 +363,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             "gV" 'zz-evil-select-pasted
             "zv" 'zz-scroll-line-to-quarter
             "RET" 'newline
+            "ga" 'zz-file-stats
 
             ;; Buffer navigation
             "gb" 'evil-buffer
