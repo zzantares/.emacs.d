@@ -108,7 +108,7 @@
   (interactive)
   (if (projectile-project-p)
       (counsel-projectile-find-file)
-    (counsel-find-files)))
+    (counsel-find-file)))
 
 (defun zz-toggle-dired ()
   "Toggle dired buffer."
@@ -664,17 +664,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (concat "C-w " (upcase zz-motion-left)) 'buf-move-left
             (concat "C-w " (upcase zz-motion-right)) 'buf-move-right))
 
-(use-package centered-window-mode
-  :config
-  (when (zz-on-asus)
-    (setq cwm-centered-window-width 100))
-  (when (zz-on-pro)
-    (setq cwm-centered-window-width 90))
-  :general
-  (:keymaps 'normal
-            :prefix "SPC"
-            "cw" 'centered-window-mode))
-
 (use-package yasnippet
   :init
   (add-hook 'prog-mode-hook #'yas-minor-mode)
@@ -1078,10 +1067,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                          'local)))
   :config
   (elpy-enable)
-  (elpy-use-ipython)
   (setq elpy-rpc-backend "jedi"
         elpy-rpc-python-command "python3"
-        elpy-modules (delq 'elpy-module-flymake elpy-modules))
+        elpy-modules (delq 'elpy-module-flymake elpy-modules)
+        python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i --simple-prompt")
   (delete `elpy-module-highlight-indentation elpy-modules))
 
 ;; ===================================================
@@ -1156,14 +1146,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package oceanic-theme :disabled)
 (use-package material-theme :disabled)
 (use-package twilight-theme :disabled)
-(use-package solarized-theme :disabled)
+(use-package solarized-theme
+  :demand t
+  :config (load-theme 'solarized-dark t))
 (use-package soft-stone-theme :disabled)
 (use-package apropospriate-theme :disabled)
 (use-package twilight-bright-theme :disabled)
 (use-package twilight-anti-bright-theme :disabled)
-(use-package color-theme-sanityinc-tomorrow
-  :demand t
-  :config (load-theme 'sanityinc-tomorrow-bright t))
+;(use-package color-theme-sanityinc-tomorrow
+;  :demand t :config (load-theme 'sanityinc-tomorrow-bright t))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
@@ -1230,21 +1221,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Fira Mono")
 
-(if (display-graphic-p)
-    (progn
-      ;; Use Fira Code ligatures when this font is activated
-      (let ((font-query (query-font (face-attribute 'default :font))))
-        (when (string-match-p (regexp-quote "Fira Code") (elt font-query 0))
-          (mac-auto-operator-composition-mode)))
+;; Only applies to Yamamoto Mitsuharu's patch
+(when (boundp 'mac-carbon-version-string)
+  (mac-toggle-tab-bar)
+  (when (display-graphic-p)
+    ;; Use Fira Code ligatures when this font is activated
+    (let ((font-query (query-font (face-attribute 'default :font))))
+      (when (string-match-p (regexp-quote "Fira Code") (elt font-query 0))
+        (mac-auto-operator-composition-mode)))))
 
-      (when (zz-on-asus)
-        ;; Obtener medidas con (frame-width) (frame-height)
-        (add-to-list 'default-frame-alist '(left . 0))
-        (add-to-list 'default-frame-alist '(top . 0))
-        (add-to-list 'default-frame-alist '(width . 225))
-        (add-to-list 'default-frame-alist '(height . 61)))
-      (when (zz-on-pro)
-        (add-to-list 'default-frame-alist '(left . 4))
-        (add-to-list 'default-frame-alist '(top . 0))
-        (add-to-list 'default-frame-alist '(width . 140))
-        (add-to-list 'default-frame-alist '(height . 42)))))
+(when (display-graphic-p)
+  (when (zz-on-asus)
+    ;; Obtener medidas con (frame-width) (frame-height)
+    (add-to-list 'default-frame-alist '(left . 0))
+    (add-to-list 'default-frame-alist '(top . 0))
+    (add-to-list 'default-frame-alist '(width . 225))
+    (add-to-list 'default-frame-alist '(height . 61)))
+  (when (zz-on-pro)
+    (add-to-list 'default-frame-alist '(left . 4))
+    (add-to-list 'default-frame-alist '(top . 0))
+    (add-to-list 'default-frame-alist '(width . 140))
+    (add-to-list 'default-frame-alist '(height . 42))))
