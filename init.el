@@ -10,6 +10,11 @@
 ;; TODO: Adopt the usage of use-package's :hook keyword
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
 
+;; ===================================================
+;; NOTES & REMINDERS
+;; ===================================================
+;; => Before updating packages if all is working ok run straight-freeze-versions first.
+
 ;;(package-initialize)
 
 ;;; Code:
@@ -529,10 +534,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             "fn" 'flyspell-correct-next-word-generic))
 
 (use-package magit
-  :commands (magit-after-revert-hook magit-not-reverted-hook)
-  :init
-  (add-hook 'git-gutter:update-hooks 'magit-after-revert-hook)
-  (add-hook 'git-gutter:update-hooks 'magit-not-reverted-hook)
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
         magit-save-repository-buffers nil)
@@ -1135,26 +1136,24 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; ===================================================
 ;; THEMES
 ;; ===================================================
-
-(use-package seti-theme :disabled)
-(use-package planet-theme :disabled)
-(use-package flatui-theme :disabled)
-(use-package base16-theme :disabled)
-(use-package molokai-theme :disabled)
-(use-package gruvbox-theme :disabled)
-(use-package dracula-theme :disabled)
-(use-package oceanic-theme :disabled)
-(use-package material-theme :disabled)
-(use-package twilight-theme :disabled)
-(use-package solarized-theme
+(use-package seti-theme :no-require t)
+(use-package planet-theme :no-require t)
+(use-package flatui-theme :no-require t)
+(use-package base16-theme :no-require t)
+(use-package molokai-theme :no-require t)
+(use-package gruvbox-theme :no-require t)
+(use-package dracula-theme :no-require t)
+(use-package oceanic-theme :no-require t)
+(use-package material-theme :no-require t)
+(use-package twilight-theme :no-require t)
+(use-package solarized-theme :no-require t)
+(use-package soft-stone-theme :no-require t)
+(use-package apropospriate-theme :no-require t)
+(use-package twilight-bright-theme :no-require t)
+(use-package twilight-anti-bright-theme :no-require t)
+(use-package color-theme-sanityinc-tomorrow
   :demand t
-  :config (load-theme 'solarized-dark t))
-(use-package soft-stone-theme :disabled)
-(use-package apropospriate-theme :disabled)
-(use-package twilight-bright-theme :disabled)
-(use-package twilight-anti-bright-theme :disabled)
-;(use-package color-theme-sanityinc-tomorrow
-;  :demand t :config (load-theme 'sanityinc-tomorrow-bright t))
+  :config (load-theme 'sanityinc-tomorrow-bright t))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
