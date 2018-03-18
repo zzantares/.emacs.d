@@ -8,7 +8,10 @@
 ;; TODO: Explore the no-littering package.
 ;; TODO: Make that if cursor is at the end M-v is paste after, otherwise is paste before.
 ;; TODO: Adopt the usage of use-package's :hook keyword
+;; TODO: Conflicting style magit-diff and highlight-chars tab: https://emacs.stackexchange.com/q/38695/12340
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
+;; TODO: Org easy templates expansion not working
+;; TODO: Bubble lines not working, tested on haskell
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -317,6 +320,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                       "hd" 'apropos-documentation
                       "hi" 'info)
   (general-define-key :keymaps '(normal visual) :prefix "SPC"
+                      "lt" 'counsel-load-theme
                       "ln" 'linum-mode
                       "ta" 'align-regexp))
 
@@ -666,8 +670,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
             (concat "C-w " (upcase zz-motion-right)) 'buf-move-right))
 
 (use-package yasnippet
-  :init
-  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
 
@@ -833,9 +836,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 (use-package highlight-chars
-  :commands hc-highlight-tabs
-  :init
-  (add-hook 'font-lock-mode-hook 'hc-highlight-tabs)
+  ;; These settings make magit to not color diffs in magit-status
+  ;; See: https://emacs.stackexchange.com/q/38695/12340
+  ;; :commands hc-highlight-tabs
+  ;; :init
+  ;; (add-hook 'font-lock-mode-hook 'hc-highlight-tabs)
   :config
   (set-face-attribute 'hc-tab nil :background nil :foreground "#586e75"))
 
@@ -1003,6 +1008,17 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :straight nil
   :mode ("\\.m$" . octave-mode))
 
+(use-package elm-mode
+  :init
+  (add-hook 'elm-mode-hook
+            '(lambda ()
+               (set (make-local-variable 'company-backends) '(company-elm))
+               (company-mode t)
+               (add-hook 'before-save-hook
+                         'elm-mode-format-buffer
+                         nil
+                         'local))))
+
 (use-package go-mode
   :config
   (add-hook 'go-mode-hook
@@ -1129,7 +1145,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :after org
   :demand t
   :config
-  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"
+  ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
         org-reveal-mathjax t))
 
 
@@ -1209,13 +1226,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; Font settings
 ;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-(set-face-attribute 'default nil :height 160 :family "Consolas")
+;; (set-face-attribute 'default nil :height 160 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
 ;; (set-face-attribute 'default nil :height 150 :family "Monaco")
-;; (set-face-attribute 'default nil :height 150 :family "Menlo")
+(set-face-attribute 'default nil :height 150 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Fira Mono")
