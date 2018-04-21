@@ -13,6 +13,7 @@
 ;; TODO: Org easy templates expansion not working (https://github.com/yjwen/org-reveal/issues/323)
 ;; TODO: Explore intero as replacement to haskell-mode
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
+;; TODO: Fix up and down while visually selecting a hunk in magit status mode.
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -257,6 +258,31 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (evil-visual-char)
   (evil-goto-mark ?]))
 
+(defun zz-quit-help-like-windows (&optional kill frame)
+  "Quit all windows with help-like buffers.
+Call `quit-windows-on' for every buffer named in
+`zz-help-like-windows-name'.  The optional parameters KILL and FRAME
+are just as in `quit-windows-on', except FRAME defaults to t (so
+that only windows on the selected frame are considered).
+
+Note that a nil value for FRAME cannot be distinguished from an
+omitted parameter and will be ignored; use some other value if
+you want to quit windows on all frames."
+  (interactive)
+  (let ((frame (or frame t))
+        (zz-help-like-windows '(;; Ubiquitous help buffers
+                                "*Help*"
+                                "*Apropos*"
+                                "*Messages*"
+                                "*Completions*"
+                                ;; Other general buffers
+                                "*Command History*"
+                                "*Compile-Log*"
+                                "*disabled command*")))
+    (dolist (name zz-help-like-windows)
+      (ignore-errors
+        (quit-windows-on name kill frame)))))
+
 ;; See: https://emacs.stackexchange.com/a/10233/12340
 (defun zz-lisp-indent-function (indent-point state)
   "This function is the normal value of the variable `lisp-indent-function'.
@@ -388,19 +414,20 @@ Lisp function does not specify a special indentation."
   :config
   (general-define-key :states 'motion "M-," 'zz-preferences)
   (general-define-key :states 'normal :prefix "SPC"
-                      "hk" 'describe-key
-                      "hm" 'describe-mode
-                      "hb" 'describe-bindings
-                      "hp" 'describe-package
-                      "hv" 'describe-variable
-                      "hf" 'describe-function
-                      "ha" 'apropos-command
-                      "hd" 'apropos-documentation
-                      "hi" 'info)
+    "q" 'zz-quit-help-like-windows
+    "hk" 'describe-key
+    "hm" 'describe-mode
+    "hb" 'describe-bindings
+    "hp" 'describe-package
+    "hv" 'describe-variable
+    "hf" 'describe-function
+    "ha" 'apropos-command
+    "hd" 'apropos-documentation
+    "hi" 'info)
   (general-define-key :keymaps '(normal visual) :prefix "SPC"
-                      "lt" 'counsel-load-theme
-                      "ln" 'linum-mode
-                      "ta" 'align-regexp))
+    "lt" 'counsel-load-theme
+    "ln" 'linum-mode
+    "ta" 'align-regexp))
 
 (use-package evil
   :demand t
@@ -928,6 +955,26 @@ Lisp function does not specify a special indentation."
   :config
   (global-disable-mouse-mode))
 
+(use-package evil-multiedit
+  :demand t
+  :config
+  ;; TODO: Move this bindings to general (note these are custom states)
+  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
+  (define-key evil-multiedit-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
+  (define-key evil-motion-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
+  (define-key evil-multiedit-state-map (kbd "]c") 'evil-multiedit-next)
+  (define-key evil-multiedit-state-map (kbd "[c") 'evil-multiedit-prev)
+  (define-key evil-multiedit-insert-state-map (kbd "]c") 'evil-multiedit-next)
+  (define-key evil-multiedit-insert-state-map (kbd "[c") 'evil-multiedit-prev)
+  :general
+  (:keymaps 'normal
+   "M-n" 'evil-multiedit-match-and-next
+   "M-N" 'evil-multiedit-match-and-prev)
+  (:keymaps 'visual
+   "M-n" 'evil-multiedit-match-and-next
+   "M-N" 'evil-multiedit-match-and-prev
+   "R" 'evil-multiedit-match-all))
+
 (use-package whitespace
   :diminish whitespace-mode
   :commands whitespace-mode
@@ -1187,12 +1234,19 @@ Lisp function does not specify a special indentation."
 ;; ===================================================
 
 (use-package org
+  :init
+  (font-lock-add-keywords
+   'org-mode
+   '(("^ +\\([-*]\\) "
+      (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   :config
+  (require 'org-tempo)
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (setq org-log-done t
         org-ellipsis " ⤵"
         org-src-fontify-natively t
-        org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "DONE"))
+        org-todo-keywords '((sequence "TODO" "IN-PROGRESS"
+                                      "|" "DONE" "DELEGATED" "CANCELED"))
         org-agenda-files (list "~/Documents/org/free.org"
                                "~/Documents/org/paid.org"
                                "~/Documents/org/todo.org"))
@@ -1200,7 +1254,8 @@ Lisp function does not specify a special indentation."
   (:keymaps 'normal
             :prefix "SPC"
             "oa" 'org-agenda
-            "ot" 'org-todo)
+            "ot" 'org-todo
+            "os" 'org-schedule)
   (:keymaps 'org-mode-map
             :states 'normal
             :prefix "SPC"
@@ -1216,29 +1271,55 @@ Lisp function does not specify a special indentation."
             (upcase zz-motion-up) 'org-shiftup
             (upcase zz-motion-down) 'org-shiftdown
             (upcase zz-motion-right) 'org-shiftright
-            (upcase zz-motion-left) 'org-shift-left)
+            (upcase zz-motion-left) 'org-shiftleft)
   (:keymaps 'org-agenda-mode-map
             :states '(insert emacs)
-            (concat "C-" zz-motion-up) 'org-agenda-next-line
-            (concat "C-" zz-motion-down) 'org-agenda-previous-line))
+            (concat "C-" zz-motion-up) 'org-agenda-previous-line
+            (concat "C-" zz-motion-down) 'org-agenda-next-line))
+
+(use-package org-crypt
+  :after org
+  :demand t
+  :straight nil
+  :config
+  (setq org-tags-exclude-from-inheritance '("crypt")
+        org-crypt-key "zzantares@gmail.com"))
 
 (use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
+
+(use-package org-ref
   :after org
   :demand t
   :config
-  (org-bullets-mode 1))
+  (setq org-ref-completion-library 'org-ref-ivy-cite
+        reftex-default-bibliography '("~/workspace/bibliography/references.bib")
+        org-ref-bibliography-notes "~/workspace/bibliography/notes.org"
+        org-ref-default-bibliography '("~/workspace/bibliography/references.bib")
+        org-ref-pdf-directory "~/workspace/bibliography/bibtex-pdfs/")
+  :general
+  (:keymaps 'normal
+            :prefix "SPC"
+            "oc" 'org-ref-ivy-insert-cite-link
+            "or" 'org-ref-ivy-insert-ref-link
+            "ol" 'org-ref-ivy-insert-label-link)
+  (:keymaps 'org-mode-map
+            :states '(insert emacs)
+            "C-c C-]" 'org-ref-insert-cite-with-completion
+            "C-c ]" 'org-ref-insert-cite-with-completion))
 
 (use-package ox-gfm
   :after org
   :demand t)
 
-(use-package ox-reveal
-  :after org
-  :demand t
-  :config
-  ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
-        org-reveal-mathjax t))
+;; ox-reveal makes org easy templates not work
+;; (use-package ox-reveal
+;;   :after org
+;;   :demand t
+;;   :config
+;;   ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
+;;   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
+;;         org-reveal-mathjax t))
 
 
 ;; ===================================================
