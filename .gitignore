@@ -1,7 +1,5 @@
 projectile-bookmarks.eld
 recentf
-eshell/history
-eshell/lastdir
 straight/*
 straight/versions
 company-statistics-cache.el
