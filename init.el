@@ -31,9 +31,6 @@
 ;; EARLY SETTINGS
 ;; ===================================================
 
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file 'noerror)
-
 ;; Remove all GUI stuff
 (menu-bar-mode -1)
 (set-scroll-bar-mode nil)
@@ -401,6 +398,19 @@ Lisp function does not specify a special indentation."
 ;; ===================================================
 ;; PACKAGES
 ;; ===================================================
+
+(use-package no-littering
+  :demand t
+  :config
+  (require 'recentf)
+  (add-to-list 'recentf-exclude no-littering-var-directory)
+  (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (setq backup-directory-alist
+        `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (load custom-file 'noerror))
 
 (use-package exec-path-from-shell
   :defer 3
@@ -1357,9 +1367,6 @@ Lisp function does not specify a special indentation."
       kept-new-versions 6
       kept-old-versions 2
       version-control t)   ; use versioned backups
-
-(setq auto-save-file-name-transforms
-      '((".*" "~/.emacs-saves/" t)))
 
 ;; Use proper ls in emacs mac os
 (setq insert-directory-program "/usr/local/bin/gls")
