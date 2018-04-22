@@ -1319,12 +1319,12 @@ Lisp function does not specify a special indentation."
             "C-c ]" 'org-ref-insert-cite-with-completion))
 
 (use-package ox-gfm
-  :after org
+  :after ox
   :demand t)
 
 ;; ox-reveal makes org easy templates not work
 ;; (use-package ox-reveal
-;;   :after org
+;;   :after ox
 ;;   :demand t
 ;;   :config
 ;;   ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
@@ -1338,7 +1338,6 @@ Lisp function does not specify a special indentation."
 (use-package seti-theme :no-require t)
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
-(use-package base16-theme :no-require t)
 (use-package molokai-theme :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
@@ -1350,9 +1349,10 @@ Lisp function does not specify a special indentation."
 (use-package apropospriate-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
-(use-package color-theme-sanityinc-tomorrow
+(use-package color-theme-sanityinc-tomorrow :no-require t)
+(use-package base16-theme
   :demand t
-  :config (load-theme 'sanityinc-tomorrow-bright t))
+  :config (load-theme 'base16-zenburn))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
