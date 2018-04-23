@@ -1380,9 +1380,7 @@ Lisp function does not specify a special indentation."
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package base16-theme
-  :demand t
-  :config (load-theme 'base16-zenburn))
+(use-package base16-theme :demand t :config (load-theme 'base16-classic-dark))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
