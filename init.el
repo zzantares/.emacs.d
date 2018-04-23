@@ -575,6 +575,7 @@ Lisp function does not specify a special indentation."
     "<backtab>" 'dired-subtree-cycle))
 
 (use-package ivy
+  :diminish ivy-mode
   :config
   (ivy-mode 1)
   (setq ivy-initial-inputs-alist nil)
@@ -590,6 +591,7 @@ Lisp function does not specify a special indentation."
    (concat "C-" zz-motion-up) 'ivy-previous-line))
 
 (use-package counsel
+  :diminish counsel-mode
   :config
   (when (eq system-type 'darwin)
     (setq counsel-locate-cmd 'counsel-locate-cmd-mdfind))
@@ -693,8 +695,8 @@ Lisp function does not specify a special indentation."
   (global-evil-matchit-mode 1))
 
 (use-package evil-snipe
-  :diminish snipe
   :defer 3
+  :diminish evil-snipe-local-mode
   :commands turn-off-evil-snipe-override-mode
   :init
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
@@ -715,6 +717,7 @@ Lisp function does not specify a special indentation."
   (evil-embrace-enable-evil-surround-integration))
 
 (use-package evil-lispy
+  :diminish evil-lispy-mode
   :commands evil-lispy-mode
   :init
   (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode))
@@ -786,6 +789,7 @@ Lisp function does not specify a special indentation."
             (concat "C-w " (upcase zz-motion-right)) 'buf-move-right))
 
 (use-package yasnippet
+  :diminish yas-minor-mode
   :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
@@ -815,6 +819,7 @@ Lisp function does not specify a special indentation."
 
 (use-package smartparens
   :defer 3
+  :diminish smartparens-mode
   :commands smartparens-mode
   :init
   (add-hook 'prog-mode-hook #'smartparens-mode)
@@ -834,6 +839,7 @@ Lisp function does not specify a special indentation."
   (sp-pair "[" nil :post-handlers '((zz-newline-and-enter-sexp "RET"))))
 
 (use-package evil-smartparens
+  :diminish evil-smartparens-mode
   :hook (smartparens-enabled . evil-smartparens-mode))
 
 (use-package expand-region
@@ -850,6 +856,7 @@ Lisp function does not specify a special indentation."
 (use-package evil-vimish-fold
   :after vimish-fold
   :demand t
+  :diminish evil-vimish-fold-mode
   :config
   (evil-vimish-fold-mode 1)
   :general
@@ -962,6 +969,7 @@ Lisp function does not specify a special indentation."
 
 (use-package disable-mouse
   :defer 5
+  :diminish disable-mouse-global-mode
   :config
   (global-disable-mouse-mode))
 
@@ -1034,6 +1042,7 @@ Lisp function does not specify a special indentation."
             "," 'emmet-expand-line))
 
 (use-package drag-stuff
+  :diminish drag-stuff-mode
   :init
   (drag-stuff-global-mode 1)
   :config
@@ -1185,6 +1194,7 @@ Lisp function does not specify a special indentation."
 
 (use-package company
   :defer 5
+  :diminish company-mode
   :config
   (global-company-mode)
   (company-tng-configure-default)
