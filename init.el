@@ -443,6 +443,7 @@ Lisp function does not specify a special indentation."
   :demand t
   :custom
   (evil-want-C-u-scroll t)
+  (evil-want-Y-yank-to-eol t)
   ;; (evil-search-module 'evil-search)
 
   :config
@@ -1104,11 +1105,10 @@ Lisp function does not specify a special indentation."
 (use-package phpunit
   :after php-mode
   :general
-  (:keymaps 'normal
-            :prefix "SPC"
-            "rr" 'phpunit-current-test
-            "rt" 'phpunit-current-class
-            "ra" 'phpunit-current-project))
+  (:keymaps 'normal :prefix "SPC"
+   "rr" 'phpunit-current-test
+   "rt" 'phpunit-current-class
+   "ra" 'phpunit-current-project))
 
 (use-package web-mode
   :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.[agj]sp\\'" "\\.as[cp]x\\'" "\\.erb\\'" "\\.mustache\\'" "\\.djhtml\\'" "\\.html?\\'" "\\.css\\'")
@@ -1197,7 +1197,7 @@ Lisp function does not specify a special indentation."
                          'local))))
 
 (use-package go-mode
-  :config
+  :init
   (add-hook 'go-mode-hook
             '(lambda ()
                (add-hook 'before-save-hook
@@ -1330,7 +1330,7 @@ Lisp function does not specify a special indentation."
 
 (use-package org-ref
   :after org
-  :demand t
+  :defer 3
   :config
   (setq org-ref-completion-library 'org-ref-ivy-cite
         reftex-default-bibliography '("~/workspace/bibliography/references.bib")
