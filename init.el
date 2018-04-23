@@ -5,15 +5,15 @@
 ;; TODO: Quoting lambdas doesn't let compiler to compile them, it seems is not necessary.
 ;; TODO: Zshell is not working right.
 ;; TODO: Use evil-window-map to define the C-w mappings.
-;; TODO: Explore the no-littering package.
+;; TODO: Explore evil-want-* settings.
 ;; TODO: Make that if cursor is at the end M-v is paste after, otherwise is paste before.
 ;; TODO: Adopt the usage of use-package's :hook keyword
 ;; TODO: Conflicting style magit-diff and highlight-chars tab: https://emacs.stackexchange.com/q/38695/12340
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
-;; TODO: Org easy templates expansion not working (https://github.com/yjwen/org-reveal/issues/323)
-;; TODO: Explore intero as replacement to haskell-mode
+;; TODO: Org easy templates expansion not working with ox-reveal (https://github.com/yjwen/org-reveal/issues/323)
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
-;; TODO: Fix up and down while visually selecting a hunk in magit status mode.
+;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
+;; TODO: In haskell-mode pressing Y freezes emacs https://github.com/expez/evil-smartparens/issues/50
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -1098,7 +1098,6 @@ Lisp function does not specify a special indentation."
 
 (use-package cask-mode)
 (use-package json-mode)
-(use-package haskell-mode)
 (use-package dockerfile-mode)
 (use-package php-mode)
 
@@ -1164,6 +1163,27 @@ Lisp function does not specify a special indentation."
   :straight nil
   :hook (emacs-lisp-mode . (lambda ()
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
+
+(use-package haskell-mode
+  ;; workaround https://github.com/expez/evil-smartparens/issues/50
+  :hook (haskell-mode . (lambda () (evil-smartparens-mode -1)))
+  :config
+  (setq haskell-indentation-electric-flag t))
+
+(use-package intero
+  :init
+  (intero-global-mode 1)
+  :diminish " λ"
+  :config
+  (setq haskell-stylish-on-save t)
+  :general
+  (:keymaps 'intero-mode-map :states 'normal
+   "M-RET" 'intero-goto-definition)
+  (:keymaps 'intero-mode-map :states 'normal :prefix "SPC"
+   "ra" 'intero-repl
+   "rr" 'intero-repl-eval-region
+   "rl" 'intero-repl-load
+   "ri" 'intero-info))
 
 (use-package elm-mode
   :init
