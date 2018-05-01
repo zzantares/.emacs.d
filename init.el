@@ -1190,15 +1190,13 @@ Lisp function does not specify a special indentation."
                          'local))))
 
 (use-package go-mode
-  :init
-  (add-hook 'go-mode-hook
-            '(lambda ()
-               (add-hook 'before-save-hook
-                         '(lambda ()
-                            (gofmt-before-save)
-                            (go-remove-unused-imports))
-                         nil
-                         'local))))
+  :hook (go-mode . (lambda ()
+                     (add-hook 'write-contents-functions 'gofmt-before-save)))
+  :config
+  (setq gofmt-command "goimports")
+  :general
+  (:keymaps 'go-mode-map :states 'normal
+   "M-RET" 'godef-jump))
 
 (use-package go-eldoc
   :diminish eldoc-mode
