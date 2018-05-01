@@ -1285,29 +1285,25 @@ Lisp function does not specify a special indentation."
                                "~/Documents/org/paid.org"
                                "~/Documents/org/todo.org"))
   :general
-  (:keymaps 'normal
-            :prefix "SPC"
-            "oa" 'org-agenda
+  (:keymaps 'normal :prefix "SPC"
+            "oa" 'org-agenda)
+  (:keymaps 'org-mode-map :states 'normal :prefix "SPC"
             "ot" 'org-todo
-            "os" 'org-schedule)
-  (:keymaps 'org-mode-map
-            :states 'normal
-            :prefix "SPC"
+            "op" 'org-set-property
+            "os" 'org-schedule
+            "ox" 'org-export-dispatch
             "j" 'evil-join)
-  (:keymaps 'org-mode-map
-            :states '(insert normal)
+  (:keymaps 'org-mode-map :states '(insert normal)
             (concat "M-" zz-motion-up) 'org-metaup
             (concat "M-" zz-motion-down) 'org-metadown
             (concat "M-" zz-motion-left) 'org-metaleft
             (concat "M-" zz-motion-right) 'org-metaright)
-  (:keymaps 'org-mode-map
-            :states 'normal
+  (:keymaps 'org-mode-map :states 'normal
             (upcase zz-motion-up) 'org-shiftup
             (upcase zz-motion-down) 'org-shiftdown
             (upcase zz-motion-right) 'org-shiftright
             (upcase zz-motion-left) 'org-shiftleft)
-  (:keymaps 'org-agenda-mode-map
-            :states '(insert emacs)
+  (:keymaps 'org-agenda-mode-map :states '(insert emacs)
             (concat "C-" zz-motion-up) 'org-agenda-previous-line
             (concat "C-" zz-motion-down) 'org-agenda-next-line))
 
@@ -1343,6 +1339,10 @@ Lisp function does not specify a special indentation."
             "C-c ]" 'org-ref-insert-cite-with-completion))
 
 (use-package ox-gfm
+  :after ox
+  :demand t)
+
+(use-package ox-hugo
   :after ox
   :demand t)
 
