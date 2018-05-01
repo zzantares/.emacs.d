@@ -1,17 +1,17 @@
 ;;  init.el --- Emacs user-init-file
 ;;; Commentary:
-;; TODO: Explore byte compiling this file to improve startup time
+;; TODO: Explore byte compiling this file to improve startup time.
 ;; TODO: Prior config had a custom insert to avoid insert on read-only buffers.
 ;; TODO: Quoting lambdas doesn't let compiler to compile them, it seems is not necessary.
 ;; TODO: Zshell is not working right.
 ;; TODO: Use evil-window-map to define the C-w mappings.
 ;; TODO: Explore evil-want-* settings.
 ;; TODO: Make that if cursor is at the end M-v is paste after, otherwise is paste before.
-;; TODO: Adopt the usage of use-package's :hook keyword
-;; TODO: Conflicting style magit-diff and highlight-chars tab: https://emacs.stackexchange.com/q/38695/12340
+;; TODO: Adopt the usage of use-package's :hook keyword.
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
 ;; TODO: Org easy templates expansion not working with ox-reveal (https://github.com/yjwen/org-reveal/issues/323)
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
+;; TODO: For improve looks: https://github.com/hlissner/emacs-doom-themes
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
 ;; TODO: In haskell-mode pressing Y freezes emacs https://github.com/expez/evil-smartparens/issues/50
 
@@ -535,6 +535,10 @@ Lisp function does not specify a special indentation."
             "M-v" 'clipboard-yank
             "<escape>" 'keyboard-escape-quit))
 
+(use-package autorevert
+  :straight nil
+  :diminish auto-revert-mode)
+
 (use-package dired
   :straight nil
   :commands (auto-revert-mode zz-dired-sort-directories-first)
@@ -986,7 +990,7 @@ Lisp function does not specify a special indentation."
    "R" 'evil-multiedit-match-all))
 
 (use-package whitespace
-  :diminish whitespace-mode
+  :diminish global-whitespace-mode
   :hook ((web-mode . (lambda () (setq-local whitespace-line-column 101)))
          (prog-mode . (lambda () (setq-local whitespace-line-column 80)))
          (java-mode . (lambda () (setq-local whitespace-line-column 100)))
@@ -1191,6 +1195,7 @@ Lisp function does not specify a special indentation."
                          'local))))
 
 (use-package go-eldoc
+  :diminish eldoc-mode
   :commands go-eldoc-setup
   :init
   (add-hook 'go-mode-hook 'go-eldoc-setup))
@@ -1349,21 +1354,26 @@ Lisp function does not specify a special indentation."
 ;; THEMES
 ;; ===================================================
 (use-package seti-theme :no-require t)
+(use-package eziam-theme :no-require t)
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
+(use-package base16-theme :no-require t)
 (use-package molokai-theme :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
 (use-package twilight-theme :no-require t)
+(use-package sublime-themes :no-require t)
+(use-package farmhouse-theme :no-require t)
 (use-package solarized-theme :no-require t)
-(use-package soft-stone-theme :no-require t)
+(use-package anti-zenburn-theme :no-require t)
+(use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package base16-theme :demand t :config (load-theme 'base16-classic-dark))
+(use-package soft-stone-theme :demand t :config (load-theme 'soft-stone))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
