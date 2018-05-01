@@ -959,15 +959,6 @@ Lisp function does not specify a special indentation."
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-(use-package highlight-chars
-  ;; These settings make magit to not color diffs in magit-status
-  ;; See: https://emacs.stackexchange.com/q/38695/12340
-  ;; :commands hc-highlight-tabs
-  ;; :init
-  ;; (add-hook 'font-lock-mode-hook 'hc-highlight-tabs)
-  :config
-  (set-face-attribute 'hc-tab nil :background nil :foreground "#586e75"))
-
 (use-package disable-mouse
   :defer 5
   :diminish disable-mouse-global-mode
@@ -996,32 +987,24 @@ Lisp function does not specify a special indentation."
 
 (use-package whitespace
   :diminish whitespace-mode
-  :commands whitespace-mode
-  :init
-  (add-hook 'prog-mode-hook '(lambda ()
-                               (whitespace-mode 0)
-                               (setq whitespace-line-column 80)
-                               (whitespace-mode 1)))
-  (add-hook 'python-mode-hook '(lambda ()
-                                 (whitespace-mode 0)
-                                 (setq whitespace-line-column 79)
-                                 (whitespace-mode 1)))
-  (add-hook 'web-mode-hook '(lambda ()
-                              (whitespace-mode 0)
-                              (setq whitespace-line-column 101)
-                              (whitespace-mode 1)))
+  :hook ((web-mode . (lambda () (setq-local whitespace-line-column 101)))
+         (prog-mode . (lambda () (setq-local whitespace-line-column 80)))
+         (java-mode . (lambda () (setq-local whitespace-line-column 100)))
+         (python-mode . (lambda () (setq-local whitespace-line-column 79))))
+  :init (global-whitespace-mode 1)
   :config
-  (setq whitespace-style '(face trailing tab-mark lines-tail)))
+  (setq whitespace-style '(face trailing tab-mark lines-tail))
+  ;; Use M-x list-colors-display to see names to color references
+  (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
 
 (use-package simple
   :straight nil
   :diminish auto-fill-function
-  :commands (turn-on-auto-fill set-fill-column)
-  :init
-  (add-hook 'markdown-mode-hook (lambda () (turn-on-auto-fill) (set-fill-column 80)))
-  (add-hook 'org-mode-hook (lambda () (turn-on-auto-fill) (set-fill-column 80)))
-  (add-hook 'prog-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 80)))
-  (add-hook 'python-mode-hook (lambda() (turn-on-auto-fill) (set-fill-column 79)))
+  :hook ((java-mode . (lambda () (set-fill-column 110)))
+         (python-mode . (lambda () (set-fill-column 79)))
+         ((markdown-mode org-mode prog-mode) . (lambda ()
+                                                 (turn-on-auto-fill)
+                                                 (set-fill-column 80))))
   :general
   (:states 'normal :keymaps 'messages-buffer-mode-map
            "q" 'evil-buffer
