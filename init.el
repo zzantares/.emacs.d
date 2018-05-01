@@ -629,9 +629,9 @@ Lisp function does not specify a special indentation."
   ("M-P" 'counsel-projectile-switch-project
    "M-p" 'zz-find-file)
   (:states 'normal
-           "C-p" 'zz-find-file)
+   "C-p" 'zz-find-file)
   (:states 'normal :prefix "SPC"
-           "ag" 'counsel-projectile-ag))
+   "ag" 'counsel-projectile-rg))
 
 (use-package flyspell
   :straight nil
@@ -1035,7 +1035,13 @@ Lisp function does not specify a special indentation."
   (drag-stuff-global-mode 1)
   :config
   (add-to-list 'drag-stuff-except-modes 'org-mode)
-  (drag-stuff-define-keys))
+  (drag-stuff-define-keys)
+  :general
+  (:keymaps '(normal visual)
+   (concat "M-" zz-motion-up) 'drag-stuff-up
+   (concat "M-" zz-motion-down) 'drag-stuff-down
+   (concat "M-" zz-motion-left) 'drag-stuff-left
+   (concat "M-" zz-motion-right) 'drag-stuff-right))
 
 (use-package help-mode
   :straight nil
