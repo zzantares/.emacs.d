@@ -1163,18 +1163,15 @@ Lisp function does not specify a special indentation."
   :hook (emacs-lisp-mode . (lambda ()
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
 
-(use-package haskell-mode
+(use-package intero
   ;; workaround https://github.com/expez/evil-smartparens/issues/50
   :hook (haskell-mode . (lambda () (evil-smartparens-mode -1)))
-  :config
-  (setq haskell-indentation-electric-flag t))
-
-(use-package intero
   :init
   (intero-global-mode 1)
   :diminish " λ"
   :config
   (setq haskell-stylish-on-save t)
+  (flycheck-add-next-checker 'intero '(warning . haskell-hlint))
   :general
   (:keymaps 'intero-mode-map :states 'normal
    "M-RET" 'intero-goto-definition)
