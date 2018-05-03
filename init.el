@@ -14,6 +14,7 @@
 ;; TODO: For improve looks: https://github.com/hlissner/emacs-doom-themes
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
 ;; TODO: In haskell-mode pressing Y freezes emacs https://github.com/expez/evil-smartparens/issues/50
+;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -1144,6 +1145,9 @@ Lisp function does not specify a special indentation."
 (use-package yaml-mode
   :mode "\\.yml\\'")
 
+(use-package apib-mode
+  :mode "\\.apib\\'")
+
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
@@ -1152,7 +1156,10 @@ Lisp function does not specify a special indentation."
   :init
   (setq markdown-command "pandoc")
   :config
-  (setq markdown-gfm-use-electric-backquote nil))
+  (setq markdown-gfm-use-electric-backquote nil)
+  :general
+  (:keymaps 'markdown-mode-map :states 'normal
+   "TAB" 'markdown-cycle))
 
 (use-package octave
   :straight nil
