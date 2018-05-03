@@ -395,6 +395,11 @@ Lisp function does not specify a special indentation."
   (require 'recentf)
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (setq backup-by-copying t
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
   (setq backup-directory-alist
         `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
   (setq auto-save-file-name-transforms
@@ -987,7 +992,7 @@ Lisp function does not specify a special indentation."
          (python-mode . (lambda () (setq-local whitespace-line-column 79))))
   :init (global-whitespace-mode 1)
   :config
-  (setq whitespace-style '(face trailing tab-mark lines-tail))
+  (setq whitespace-style '(face trailing tabs tab-mark lines-tail))
   ;; Use M-x list-colors-display to see names to color references
   (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
 
@@ -1192,7 +1197,7 @@ Lisp function does not specify a special indentation."
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
-                     (add-hook 'write-contents-functions 'gofmt-before-save)))
+                     (add-hook 'before-save-hook 'gofmt-before-save nil 'local)))
   :config
   (setq gofmt-command "goimports")
   :general
@@ -1386,13 +1391,6 @@ Lisp function does not specify a special indentation."
 
 (setq user-full-name "Julio César"
       user-mail-address "zzantares@gmail.com")
-
-(setq backup-by-copying t   ; don't clobber symlinks
-      backup-directory-alist '(("." . "~/.emacs-saves"))
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2
-      version-control t)   ; use versioned backups
 
 ;; Use proper ls in emacs mac os
 (setq insert-directory-program "/usr/local/bin/gls")
