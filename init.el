@@ -91,16 +91,6 @@
   (interactive)
   (zz-scroll-half-page t))
 
-(defun zz-on-asus ()
-  "Return non-nil if we are on asus monitor."
-  (and (= 2048 (display-pixel-width))
-       (= 1152 (display-pixel-height))))
-
-(defun zz-on-pro ()
-  "Return non-nil if we are on macbook pro retina display."
-  (and (= 1280 (display-pixel-width))
-       (= 800 (display-pixel-height))))
-
 (defun zz-toggle-projectile-dired ()
   "Toggle projectile-dired buffer."
   (interactive)
@@ -1086,6 +1076,17 @@ Lisp function does not specify a special indentation."
 (use-package htmlize)
 (use-package esup)
 
+(use-package frame
+  :straight nil
+  :hook (after-init . toggle-frame-fullscreen)
+  :init
+  (setq frame-title-format '("%b"))
+  ;; When no-title-bar allows to fill the whole window (with menubar)
+  (setq frame-resize-pixelwise t)
+  ;; For others solutions: https://stackoverflow.com/a/20411530/2948807
+  ;; Avoid new workspace on fullscreen
+  (setq ns-use-native-fullscreen nil))
+
 ;; ===================================================
 ;; LANGUAGE SPECIFIC MODES AND PACKAGES
 ;; ===================================================
@@ -1405,9 +1406,6 @@ Lisp function does not specify a special indentation."
 ;;  Disable blink cursor
 (blink-cursor-mode -1)
 
-;; Show filename in the window title
-(setq frame-title-format '("%b"))
-
 ;; Don't show the startup screen
 (setq inhibit-startup-screen t)
 
@@ -1449,16 +1447,3 @@ Lisp function does not specify a special indentation."
     (let ((font-query (query-font (face-attribute 'default :font))))
       (when (string-match-p (regexp-quote "Fira Code") (elt font-query 0))
         (mac-auto-operator-composition-mode)))))
-
-(when (display-graphic-p)
-  (when (zz-on-asus)
-    ;; Obtener medidas con (frame-width) (frame-height)
-    (add-to-list 'default-frame-alist '(left . 0))
-    (add-to-list 'default-frame-alist '(top . 0))
-    (add-to-list 'default-frame-alist '(width . 225))
-    (add-to-list 'default-frame-alist '(height . 61)))
-  (when (zz-on-pro)
-    (add-to-list 'default-frame-alist '(left . 4))
-    (add-to-list 'default-frame-alist '(top . 0))
-    (add-to-list 'default-frame-alist '(width . 140))
-    (add-to-list 'default-frame-alist '(height . 42))))
