@@ -411,7 +411,10 @@ Lisp function does not specify a special indentation."
 (use-package exec-path-from-shell
   :defer 3
   :if (memq window-system '(mac ns x))
-  :config (exec-path-from-shell-initialize))
+  :config
+  (dolist (envvar '("GOPATH" "GOROOT"))
+    (add-to-list 'exec-path-from-shell-variables envvar))
+  (exec-path-from-shell-initialize))
 
 (use-package diminish)
 
