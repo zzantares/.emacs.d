@@ -1,4 +1,2 @@
-eshell/history
-eshell/lastdir
-company
-projectile
+*
+!eshell/alias

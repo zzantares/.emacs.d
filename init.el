@@ -1381,16 +1381,16 @@ Lisp function does not specify a special indentation."
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
 (use-package twilight-theme :no-require t)
-(use-package sublime-themes :no-require t)
 (use-package farmhouse-theme :no-require t)
 (use-package solarized-theme :no-require t)
+(use-package soft-stone-theme :no-require t)
 (use-package anti-zenburn-theme :no-require t)
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package soft-stone-theme :demand t :config (load-theme 'soft-stone))
+(use-package sublime-themes :demand t :config (load-theme 'granger))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
