@@ -186,6 +186,12 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (git-gutter:stage-hunk)
   (setq git-gutter:ask-p t))
 
+(defun zz-magit-checkout (revision)
+  "Check out a REVISION branch updating the mode line (reverts the buffer)."
+  (interactive (list (magit-read-other-branch-or-commit "Checkout")))
+  (magit-checkout revision)
+  (revert-buffer t t))
+
 (defun zz-file-stats ()
   "Gives the filename, current line and column of point."
   (interactive)
@@ -434,7 +440,7 @@ Lisp function does not specify a special indentation."
     "hd" 'apropos-documentation
     "hi" 'info)
   (general-define-key :keymaps '(normal visual) :prefix "SPC"
-    "lt" 'counsel-load-theme
+    "lt" '(lambda () (interactive) (counsel-load-theme) (zz-fix-whitespace))
     "ln" 'linum-mode
     "ta" 'align-regexp))
 
@@ -996,6 +1002,9 @@ Lisp function does not specify a special indentation."
          (python-mode . (lambda () (setq-local whitespace-line-column 79))))
   :init (global-whitespace-mode 1)
   :config
+  (defun zz-fix-whitespace ()
+    "Fix whitespace-tab face (useful after changing themes)."
+    (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
   (setq whitespace-style '(face trailing tabs tab-mark lines-tail))
   ;; Use M-x list-colors-display to see names to color references
   (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
