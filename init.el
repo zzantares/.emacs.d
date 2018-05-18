@@ -1098,6 +1098,19 @@ Lisp function does not specify a special indentation."
   (eval-after-load 'evil-ex
     '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen)))
 
+(use-package writeroom-mode
+  :init
+  ;; Resizing text when writeroom is enabled and maintain widths
+  ;; (advice-add 'text-scale-adjust :after
+  ;;             #'visual-fill-column-adjust)
+  (setq writeroom-major-modes '(text-mode prog-mode))
+  (eval-after-load 'evil-ex
+    '(evil-ex-define-cmd "free[screen]" 'writeroom-mode))
+  :general
+  (:keymaps 'writeroom-mode-map :states 'normal
+   "gl" 'writeroom-toggle-mode-line
+   "[h" 'writeroom-decrease-width
+   "]h" 'writeroom-increase-width))
 
 ;; ===================================================
 ;; LANGUAGE SPECIFIC MODES AND PACKAGES
