@@ -812,8 +812,7 @@ Lisp function does not specify a special indentation."
 (use-package flycheck
   :diminish flycheck-mode
   :commands global-flycheck-mode
-  :init
-  (add-hook 'prog-mode-hook 'global-flycheck-mode)
+  :hook (prog-mode . global-flycheck-mode)
   :config
   (setq flycheck-idle-change-delay 5
         flycheck-check-syntax-automatically '(save idle-change)
@@ -832,8 +831,7 @@ Lisp function does not specify a special indentation."
   :defer 3
   :diminish smartparens-mode
   :commands smartparens-mode
-  :init
-  (add-hook 'prog-mode-hook #'smartparens-mode)
+  :hook (prog-mode . smartparens-mode)
   :config
   (require 'smartparens-config)
   (sp-with-modes 'emacs-lisp-mode
@@ -1391,16 +1389,18 @@ Lisp function does not specify a special indentation."
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
 (use-package twilight-theme :no-require t)
+(use-package sublime-themes :no-require t)
 (use-package farmhouse-theme :no-require t)
 (use-package solarized-theme :no-require t)
 (use-package soft-stone-theme :no-require t)
+(use-package hc-zenburn-theme :no-require t)
 (use-package anti-zenburn-theme :no-require t)
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package sublime-themes :demand t :config (load-theme 'granger))
+(use-package danneskjold-theme :demand t :config (load-theme 'danneskjold))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
@@ -1443,12 +1443,12 @@ Lisp function does not specify a special indentation."
 
 ;; Font settings
 ;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-;; (set-face-attribute 'default nil :height 160 :family "Consolas")
+(set-face-attribute 'default nil :height 160 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
-(set-face-attribute 'default nil :height 150 :family "Monaco")
+;; (set-face-attribute 'default nil :height 150 :family "Monaco")
 ;; (set-face-attribute 'default nil :height 150 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
