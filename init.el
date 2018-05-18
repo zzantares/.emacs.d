@@ -466,8 +466,6 @@ Lisp function does not specify a special indentation."
     :repeat motion
     :type line
     (zz-scroll-half-page nil))
-  (eval-after-load 'evil-ex
-    '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen))
 
   (general-define-key :states 'motion
       zz-motion-up 'evil-previous-line
@@ -1102,7 +1100,11 @@ Lisp function does not specify a special indentation."
   (setq frame-resize-pixelwise t)
   ;; For others solutions: https://stackoverflow.com/a/20411530/2948807
   ;; Avoid new workspace on fullscreen
-  (setq ns-use-native-fullscreen nil))
+  (setq ns-use-native-fullscreen nil)
+  :config
+  (eval-after-load 'evil-ex
+    '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen)))
+
 
 ;; ===================================================
 ;; LANGUAGE SPECIFIC MODES AND PACKAGES
