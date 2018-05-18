@@ -855,17 +855,10 @@ Lisp function does not specify a special indentation."
             "v" 'er/expand-region
             "V" 'er/contract-region))
 
-(use-package vimish-fold
-  :defer 3
-  :config
-  (vimish-fold-global-mode 1))
-
 (use-package evil-vimish-fold
-  :after vimish-fold
   :demand t
   :diminish evil-vimish-fold-mode
-  :config
-  (evil-vimish-fold-mode 1)
+  :hook (prog-mode . evil-vimish-fold-mode)
   :general
   (:states '(normal motion) :keymaps 'evil-vimish-fold-mode-map
            (concat "z" zz-motion-up) 'evil-vimish-fold/previous-fold
