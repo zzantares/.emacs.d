@@ -666,6 +666,7 @@ Lisp function does not specify a special indentation."
             "fn" 'flyspell-correct-next-word-generic))
 
 (use-package magit
+  :commands magit-read-other-branch-or-commit
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
         magit-save-repository-buffers nil)
