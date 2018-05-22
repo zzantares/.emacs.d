@@ -1086,7 +1086,7 @@ Lisp function does not specify a special indentation."
 
 (use-package frame
   :straight nil
-  :hook (after-init . toggle-frame-fullscreen)
+  ;; :hook (after-init . toggle-frame-fullscreen)
   :init
   (setq frame-title-format '("%b"))
   ;; When no-title-bar allows to fill the whole window (with menubar)
@@ -1365,6 +1365,15 @@ Lisp function does not specify a special indentation."
             "C-c C-]" 'org-ref-insert-cite-with-completion
             "C-c ]" 'org-ref-insert-cite-with-completion))
 
+(use-package ob-php
+  :straight (ob-php :type git :host github :repo "steckerhalter/ob-php")
+  :after org
+  :demand t
+  :config
+  (add-to-list 'org-babel-load-languages '(php . t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages))
+
 (use-package ox-gfm
   :after ox
   :demand t)
@@ -1398,17 +1407,21 @@ Lisp function does not specify a special indentation."
 (use-package material-theme :no-require t)
 (use-package twilight-theme :no-require t)
 (use-package sublime-themes :no-require t)
+(use-package intellij-theme :no-require t)
 (use-package farmhouse-theme :no-require t)
 (use-package solarized-theme :no-require t)
+(use-package white-sand-theme :no-require t)
 (use-package soft-stone-theme :no-require t)
 (use-package hc-zenburn-theme :no-require t)
+(use-package danneskjold-theme :no-require t)
 (use-package anti-zenburn-theme :no-require t)
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
+(use-package green-phosphor-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package danneskjold-theme :demand t :config (load-theme 'danneskjold))
+(use-package green-phosphor-theme :demand t :config (load-theme 'green-phosphor))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
