@@ -728,8 +728,7 @@ Lisp function does not specify a special indentation."
 (use-package evil-lispy
   :diminish evil-lispy-mode
   :commands evil-lispy-mode
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode))
+  :hook (emacs-lisp-mode . evil-lispy-mode))
 
 (use-package keyfreq
   :config
@@ -1088,6 +1087,10 @@ Lisp function does not specify a special indentation."
   :straight nil
   ;; :hook (after-init . toggle-frame-fullscreen)
   :init
+  ;; no-title-bars was replaced with following setting
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  ;; natural-title-bar replaced with following setting dark or ligth
+  (add-to-list 'default-frame-alist '(ns-appearance . dark))
   (setq frame-title-format '("%b"))
   ;; When no-title-bar allows to fill the whole window (with menubar)
   (setq frame-resize-pixelwise t)
@@ -1159,6 +1162,12 @@ Lisp function does not specify a special indentation."
   (add-hook 'js2-mode-hook (lambda ()
                              (tern-mode t)
                              (js2-imenu-extras-mode))))
+
+(use-package plantuml-mode
+  :mode "\\.plantuml\\'"
+  :config
+  (setq org-plantuml-jar-path
+        (concat (straight--repos-dir "plantuml-mode/bin") "plantuml.jar")))
 
 (use-package feature-mode
   :mode "\\.feature\\'")
@@ -1276,20 +1285,19 @@ Lisp function does not specify a special indentation."
 
 (use-package elpy
   :commands (flycheck-mode elpy-format-code)
-  :init
-  (add-hook 'elpy-mode-hook 'flycheck-mode)
-  (add-hook 'python-mode-hook
-            '(lambda ()
-               (add-hook 'before-save-hook '(lambda () (elpy-format-code))
-                         nil
-                         'local)))
+  :hook ((elpy-mode . flycheck-mode)
+         (python-mode . (lambda ()
+                          (add-hook 'before-save-hook 'elpy-format-code
+                                    nil
+                                    'local))))
   :config
   (elpy-enable)
   (setq elpy-rpc-backend "jedi"
         elpy-rpc-python-command "python3"
         elpy-modules (delq 'elpy-module-flymake elpy-modules)
         python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i --simple-prompt")
+        python-shell-interpreter-args "-i --simple-prompt"
+        flycheck-python-flake8-executable (executable-find "flake8"))
   (delete `elpy-module-highlight-indentation elpy-modules))
 
 ;; ===================================================
@@ -1305,6 +1313,14 @@ Lisp function does not specify a special indentation."
   :config
   (require 'org-tempo)
   (evil-set-initial-state 'org-agenda-mode 'emacs)
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               '((plantuml . t)
+                                 (python . t)
+                                 (ruby . t)
+                                 (awk . t)
+                                 (emacs-lisp . t)
+                                 (haskell . t)))
   (setq org-log-done t
         org-ellipsis " ⤵"
         org-src-fontify-natively t
@@ -1401,10 +1417,10 @@ Lisp function does not specify a special indentation."
 (use-package eziam-theme :no-require t)
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
-(use-package base16-theme :no-require t)
 (use-package molokai-theme :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
+(use-package base16-theme :no-require t)
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
 (use-package twilight-theme :no-require t)
@@ -1420,10 +1436,14 @@ Lisp function does not specify a special indentation."
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
 (use-package green-phosphor-theme :no-require t)
+(use-package green-phosphor-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
-(use-package green-phosphor-theme :demand t :config (load-theme 'green-phosphor))
+(use-package chocolate-theme
+  :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
+  :demand t
+  :config (load-theme 'chocolate))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
