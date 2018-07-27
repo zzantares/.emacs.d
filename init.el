@@ -1393,15 +1393,6 @@ Lisp function does not specify a special indentation."
             "C-c C-]" 'org-ref-insert-cite-with-completion
             "C-c ]" 'org-ref-insert-cite-with-completion))
 
-(use-package ob-php
-  :straight (ob-php :type git :host github :repo "steckerhalter/ob-php")
-  :after org
-  :demand t
-  :config
-  (add-to-list 'org-babel-load-languages '(php . t))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               org-babel-load-languages))
-
 (use-package ox-gfm
   :after ox
   :demand t)
