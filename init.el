@@ -15,6 +15,9 @@
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
 ;; TODO: In haskell-mode pressing Y freezes emacs https://github.com/expez/evil-smartparens/issues/50
 ;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
+;; TODO: Fix defer issues with centered-window-mode and hide-mode-line
+;; TODO: Try out "sebastiencs/omnibox"
+;; TODO: Use M-RET for fullscreen, maximized and normal window toggle?
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -883,12 +886,13 @@ Lisp function does not specify a special indentation."
 (use-package eyebrowse
   :after spaceline
   :demand t
-  :config
-  (eyebrowse-mode t)
-  (eyebrowse-setup-opinionated-keys)
+  :init
   (setq eyebrowse-wrap-around t
         eyebrowse-new-workspace t
         spaceline-workspace-numbers-unicode t)
+  :config
+  (eyebrowse-mode t)
+  (eyebrowse-setup-opinionated-keys)
   :general
   (:states 'normal :keymaps '(messages-buffer-mode-map dired-mode-map)
            "gt" 'eyebrowse-next-window-config)
@@ -950,7 +954,11 @@ Lisp function does not specify a special indentation."
   :config
   (setq anzu-cons-mode-line-p nil))
 
-(use-package all-the-icons)
+(use-package font-lock+)
+
+(use-package all-the-icons
+  :config
+  (require 'font-lock+))
 
 (use-package all-the-icons-dired
   :commands all-the-icons-dired-mode
@@ -1058,7 +1066,9 @@ Lisp function does not specify a special indentation."
             '(lambda ()
                (add-hook 'evil-insert-state-entry-hook 'zz-shell-insert nil t)
                (general-evil-define-key 'insert eshell-mode-map
-                 "C-l" 'zz-eshell-clear-buffer)))
+                 "C-l" 'zz-eshell-clear-buffer
+                 "C-p" 'eshell-previous-matching-input-from-input
+                 "C-n" 'eshell-previous-matching-input-from-input)))
   :config
   (setq eshell-cmpl-ignore-case t)
   ;; Error (use-package): eshell :config: Symbol’s value as variable is void: eshell-output-filter-functions
@@ -1191,6 +1201,14 @@ Lisp function does not specify a special indentation."
   (:keymaps 'markdown-mode-map :states 'normal
    "TAB" 'markdown-cycle))
 
+(use-package tex-mode
+  :straight nil
+  :hook (tex-mode . (lambda ()
+                      (setq indent-tabs-mode nil
+                            tab-stop-list (number-sequence 2 200 2)
+                            tab-width 2
+                            evil-shift-width 2))))
+
 (use-package octave
   :straight nil
   :mode ("\\.m$" . octave-mode))
@@ -1228,6 +1246,9 @@ Lisp function does not specify a special indentation."
                          'elm-mode-format-buffer
                          nil
                          'local))))
+
+(use-package scala-mode
+  :interpreter ("scala" . scala-mode))
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
@@ -1442,8 +1463,10 @@ Lisp function does not specify a special indentation."
 (use-package color-theme-sanityinc-tomorrow :no-require t)
 (use-package chocolate-theme
   :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
+  :no-require t)
+(use-package kaolin-themes
   :demand t
-  :config (load-theme 'chocolate))
+  :config (load-theme 'kaolin-dark))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
