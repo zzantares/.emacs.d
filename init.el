@@ -518,15 +518,6 @@ Lisp function does not specify a special indentation."
   minibuffer-local-isearch-map)
             "<escape>" 'zz-minibuffer-keyboard-quit))
 
-(use-package key-chord
-  :demand t
-  :config
-  (key-chord-mode 1)
-  (setq key-chord-two-keys-delay 0.2)
-  :general
-  (:keymaps 'insert
-            (general-chord "uh") 'evil-normal-state))
-
 (use-package minibuffer
   :straight nil
   :init
@@ -656,6 +647,7 @@ Lisp function does not specify a special indentation."
   (:keymaps 'normal
             :prefix "SPC"
             "fl" 'flyspell-auto-correct-previous-word
+            "sa" 'flyspell-correct-word-before-point
             "ss" '(lambda () (interactive) (ispell-change-dictionary "espanol") (flyspell-buffer))
             "se" '(lambda () (interactive) (ispell-change-dictionary "english") (flyspell-buffer))))
 
@@ -1150,10 +1142,7 @@ Lisp function does not specify a special indentation."
   (setq web-mode-css-indent-offset 2
         web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2
-        web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'")))
-  :general
-  (:keymaps '(normal web-mode-map)
-            :prefix "SPC" "rr" 'browse-url-of-file))
+        web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'"))))
 
 (use-package rbenv
   :commands global-rbenv-mode
