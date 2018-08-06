@@ -865,8 +865,14 @@ Lisp function does not specify a special indentation."
   (add-hook 'after-init-hook 'spaceline-spacemacs-theme)
   :config
   (require 'spaceline-config)
-  (setq powerline-default-separator 'wave)
-  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
+  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
+  ;; (setq powerline-height 20)
+  ;; Maybe move some of this settings to a "use-package powerline" block
+  (setq powerline-image-apple-rgb t
+        powerline-default-separator 'wave
+        powerline-text-scale-factor 0.85
+        spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
   (spaceline-toggle-minor-modes-off))
 
 (use-package window-numbering
