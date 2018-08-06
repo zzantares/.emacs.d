@@ -13,11 +13,12 @@
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
 ;; TODO: For improve looks: https://github.com/hlissner/emacs-doom-themes
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
-;; TODO: In haskell-mode pressing Y freezes emacs https://github.com/expez/evil-smartparens/issues/50
+;; TODO: In haskell-mode pressing Y freezes Emacs https://github.com/expez/evil-smartparens/issues/50
 ;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
 ;; TODO: Fix defer issues with centered-window-mode and hide-mode-line
 ;; TODO: Try out "sebastiencs/omnibox"
 ;; TODO: Use M-RET for fullscreen, maximized and normal window toggle?
+;; TODO: How about using flyspell-prog-mode?
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -1207,23 +1208,19 @@ Lisp function does not specify a special indentation."
   :hook (emacs-lisp-mode . (lambda ()
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
 
-(use-package intero
-  ;; workaround https://github.com/expez/evil-smartparens/issues/50
-  :hook (haskell-mode . (lambda () (evil-smartparens-mode -1)))
-  :init
-  (intero-global-mode 1)
-  :diminish " λ"
+(use-package haskell-mode
   :config
-  (setq haskell-stylish-on-save t)
-  (flycheck-add-next-checker 'intero '(warning . haskell-hlint))
+  (let ((stack-command "stack build --pedantic --fast"))
+    (setq haskell-stylish-on-save t
+          haskell-compile-cabal-build-command (concat "cd %s && " stack-command)
+          projectile-project-compilation-cmd stack-command
+          projectile-project-test-cmd (concat stack-command " --test")
+          flycheck-ghc-language-extensions '("OverloadedStrings")))
   :general
-  (:keymaps 'intero-mode-map :states 'normal
-   "M-RET" 'intero-goto-definition)
-  (:keymaps 'intero-mode-map :states 'normal :prefix "SPC"
-   "ra" 'intero-repl
-   "rr" 'intero-repl-eval-region
-   "rl" 'intero-repl-load
-   "ri" 'intero-info))
+  (:keymaps 'haskell-mode-map :states 'normal :prefix "SPC"
+   "rr" 'haskell-compile
+   "ra" 'projectile-compile-project
+   "rt" 'projectile-test-project))
 
 (use-package elm-mode
   :init
@@ -1489,7 +1486,7 @@ Lisp function does not specify a special indentation."
 
 ;; Font settings
 ;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-(set-face-attribute 'default nil :height 160 :family "Consolas")
+(set-face-attribute 'default nil :height 190 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
