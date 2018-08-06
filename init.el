@@ -859,21 +859,45 @@ Lisp function does not specify a special indentation."
            (concat "z" zz-motion-up) 'evil-vimish-fold/previous-fold
            (concat "z" zz-motion-down) 'evil-vimish-fold/next-fold))
 
-(use-package spaceline
-  :commands spaceline-spacemacs-theme
-  :init
-  (add-hook 'after-init-hook 'spaceline-spacemacs-theme)
+(use-package powerline
+  :if window-system
   :config
-  (require 'spaceline-config)
-  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
-  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
-  ;; (setq powerline-height 20)
-  ;; Maybe move some of this settings to a "use-package powerline" block
   (setq powerline-image-apple-rgb t
-        powerline-default-separator 'wave
-        powerline-text-scale-factor 0.85
-        spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-  (spaceline-toggle-minor-modes-off))
+        powerline-default-separator 'nil
+        powerline-text-scale-factor 0.90))
+
+(use-package spaceline
+  :config
+  ;; (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
+  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco"))
+
+(use-package spaceline-all-the-icons
+  :commands spaceline-all-the-icons-theme
+  :init
+  (add-hook 'after-init-hook 'spaceline-all-the-icons-theme)
+  :config
+  (setq spaceline-all-the-icons-separator-type 'slant
+        spaceline-all-the-icons-icon-set-bookmark 'heart
+        spaceline-all-the-icons-icon-set-vc-icon-git 'gitlab
+        spaceline-all-the-icons-icon-set-window-numbering 'solid
+        spaceline-all-the-icons-icon-set-eyebrowse-slot 'string
+        spaceline-all-the-icons-icon-set-flycheck-slim 'outline
+        spaceline-all-the-icons-flycheck-alternate t
+        spaceline-all-the-icons-highlight-file-name t
+        spaceline-all-the-icons-hide-long-buffer-path t
+        spaceline-all-the-icons-primary-separator " "
+        spaceline-all-the-icons-secondary-separator " ")
+  (spaceline-all-the-icons--setup-anzu)
+  (spaceline-toggle-all-the-icons-time-off)
+  (spaceline-toggle-all-the-icons-minor-modes-off)
+  (spaceline-toggle-all-the-icons-package-updates-off)
+  (spaceline-toggle-all-the-icons-bookmark-on)
+  (spaceline-toggle-all-the-icons-nyan-cat-on)
+  (spaceline-toggle-all-the-icons-dedicated-on)
+  (spaceline-toggle-all-the-icons-window-number-on)
+  (spaceline-toggle-all-the-icons-buffer-position-on)
+  (spaceline-toggle-all-the-icons-eyebrowse-workspace-on))
 
 (use-package window-numbering
   :after spaceline
@@ -951,7 +975,8 @@ Lisp function does not specify a special indentation."
   :after evil
   :demand t
   :config
-  (setq anzu-cons-mode-line-p nil))
+  (setq anzu-cons-mode-line-p t)
+  (global-anzu-mode +1))
 
 (use-package font-lock+)
 
