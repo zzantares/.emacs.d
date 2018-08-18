@@ -19,6 +19,7 @@
 ;; TODO: Try out "sebastiencs/omnibox"
 ;; TODO: Use M-RET for fullscreen, maximized and normal window toggle?
 ;; TODO: How about using flyspell-prog-mode?
+;; TODO: Move vanilla emacs configurations to the respective block (before org settings)
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -499,6 +500,7 @@ Lisp function does not specify a special indentation."
 
             ;; Buffer navigation
             "gb" 'evil-buffer
+            "gr" 'revert-buffer
             "M-{" 'evil-prev-buffer
             "M-}" 'evil-next-buffer
             "C-a k" 'zz-kill-buffer
@@ -565,9 +567,8 @@ Lisp function does not specify a special indentation."
     "ma" 'dired-create-directory
     "md" 'dired-do-delete)
   :general
-  (:keymaps 'normal
-	    :prefix "SPC"
-	    "tt" 'zz-toggle-dired))
+  (:keymaps 'normal :prefix "SPC"
+   "tt" 'zz-toggle-dired))
 
 (use-package dired-subtree
   :after dired
@@ -1333,10 +1334,24 @@ Lisp function does not specify a special indentation."
   (setq elpy-rpc-backend "jedi"
         elpy-rpc-python-command "python3"
         elpy-modules (delq 'elpy-module-flymake elpy-modules)
-        python-shell-interpreter "ipython"
+        python-shell-interpreter "python3"
         python-shell-interpreter-args "-i --simple-prompt"
         flycheck-python-flake8-executable (executable-find "flake8"))
   (delete `elpy-module-highlight-indentation elpy-modules))
+
+;; ===================================================
+;; VANILLA PACKAGES
+;; ===================================================
+(use-package bookmark
+  :straight nil
+  :config
+  (define-key bookmark-bmenu-mode-map (kbd (concat "C-" zz-motion-up)) 'previous-line)
+  (define-key bookmark-bmenu-mode-map (kbd (concat "C-" zz-motion-down)) 'next-line)
+  :general
+  (:keymaps 'normal :prefix "SPC"
+   "bl" 'bookmark-bmenu-list
+   "bk" 'counsel-bookmark
+   "bm" 'bookmark-set))
 
 ;; ===================================================
 ;; ORG RELATED
@@ -1430,13 +1445,17 @@ Lisp function does not specify a special indentation."
   :demand t)
 
 ;; ox-reveal makes org easy templates not work
-;; (use-package ox-reveal
-;;   :after ox
-;;   :demand t
-;;   :config
-;;   ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
-;;   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
-;;         org-reveal-mathjax t))
+(use-package ox-reveal
+  :after ox
+  :demand t
+  :config
+  (->> org-structure-template-alist
+     (cdr) ;; the last value is added by ox-reveal and is set up the old way
+     (cons `(,org-reveal-note-key-char . "notes")) ;; the new way
+     (setq org-structure-template-alist))
+  ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
+        org-reveal-mathjax t))
 
 
 ;; ===================================================
