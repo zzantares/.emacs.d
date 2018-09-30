@@ -1359,6 +1359,11 @@ Lisp function does not specify a special indentation."
 
 (use-package org
   :init
+  (setq org-emphasis-regexp-components '("-[:space:]('\"{"
+                                         "-[:space:].,:!?;'\")}\\["
+                                         "[:space:]"
+                                         "."
+                                         4))
   (font-lock-add-keywords
    'org-mode
    '(("^ +\\([-*]\\) "
@@ -1395,7 +1400,11 @@ Lisp function does not specify a special indentation."
             (concat "M-" zz-motion-up) 'org-metaup
             (concat "M-" zz-motion-down) 'org-metadown
             (concat "M-" zz-motion-left) 'org-metaleft
-            (concat "M-" zz-motion-right) 'org-metaright)
+            (concat "M-" zz-motion-right) 'org-metaright
+            (concat "M-" (upcase zz-motion-up)) 'org-shiftmetaup
+            (concat "M-" (upcase zz-motion-down)) 'org-shiftmetadown
+            (concat "M-" (upcase zz-motion-right)) 'org-shiftmetaright
+            (concat "M-" (upcase zz-motion-left)) 'org-shiftmetaleft)
   (:keymaps 'org-mode-map :states 'normal
             (upcase zz-motion-up) 'org-shiftup
             (upcase zz-motion-down) 'org-shiftdown
