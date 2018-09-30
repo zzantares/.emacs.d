@@ -1241,6 +1241,7 @@ Lisp function does not specify a special indentation."
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
 
 (use-package haskell-mode
+  :hook (haskell-mode . (lambda () (evil-smartparens-mode -1)))
   :config
   (let ((stack-command "stack build --pedantic --fast"))
     (setq haskell-stylish-on-save t
@@ -1267,6 +1268,8 @@ Lisp function does not specify a special indentation."
 
 (use-package scala-mode
   :interpreter ("scala" . scala-mode))
+
+(use-package solidity-mode)
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
