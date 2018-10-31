@@ -20,6 +20,7 @@
 ;; TODO: Use M-RET for fullscreen, maximized and normal window toggle?
 ;; TODO: How about using flyspell-prog-mode?
 ;; TODO: Move vanilla emacs configurations to the respective block (before org settings)
+;; TODO: Dive in https://emacscast.org/ to find settings of org capture and ox-hugo
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -1368,8 +1369,8 @@ Lisp function does not specify a special indentation."
 
 (use-package org
   :init
-  (setq org-emphasis-regexp-components '("-[:space:]('\"{"
-                                         "-[:space:].,:!?;'\")}\\["
+  (setq org-emphasis-regexp-components '("-[:space:][:alpha:]('\"{"
+                                         "-[:space:][:alpha:].,:!?;'\")}\\["
                                          "[:space:]"
                                          "."
                                          4))
