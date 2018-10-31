@@ -1210,6 +1210,8 @@ Lisp function does not specify a special indentation."
 (use-package apib-mode
   :mode "\\.apib\\'")
 
+(use-package fountain-mode)
+
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
@@ -1267,9 +1269,13 @@ Lisp function does not specify a special indentation."
                          'local))))
 
 (use-package scala-mode
-  :interpreter ("scala" . scala-mode))
+  :interpreter ("scala" . scala-mode)
+  :hook (scala-mode . (lambda () (evil-smartparens-mode -1))))
 
 (use-package solidity-mode)
+
+(use-package nix-mode
+  :mode ("\\.nix$" . nix-mode))
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
@@ -1505,7 +1511,7 @@ Lisp function does not specify a special indentation."
   :no-require t)
 (use-package kaolin-themes
   :demand t
-  :config (load-theme 'kaolin-dark))
+  :config (load-theme 'kaolin-ocean))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
