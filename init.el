@@ -1189,7 +1189,8 @@ Lisp function does not specify a special indentation."
   :mode "\\.js\\'"
   :interpreter "node"
   :config
-  (setq-default js2-basic-offset 2)
+  (setq-default js2-basic-offset 2
+                js2-strict-missing-semi-warning nil)
   (add-to-list 'load-path "~/.config/yarn/global/node_modules/tern/emacs/tern.el")
   (autoload 'tern-mode "tern.el" nil t)
   (add-hook 'js2-mode-hook (lambda ()
@@ -1555,7 +1556,7 @@ Lisp function does not specify a special indentation."
 
 ;; Font settings
 ;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-(set-face-attribute 'default nil :height 190 :family "Consolas")
+(set-face-attribute 'default nil :height 200 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
