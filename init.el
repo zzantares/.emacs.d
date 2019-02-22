@@ -21,6 +21,7 @@
 ;; TODO: How about using flyspell-prog-mode?
 ;; TODO: Move vanilla emacs configurations to the respective block (before org settings)
 ;; TODO: Dive in https://emacscast.org/ to find settings of org capture and ox-hugo
+;; TODO: For PureScript https://github.com/kRITZCREEK/a-whole-new-world/blob/master/init.el#L360
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -44,8 +45,10 @@
 (tool-bar-mode -1)
 
 ;; Straight.el
-(let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
-      (bootstrap-version 2))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
@@ -865,41 +868,19 @@ Lisp function does not specify a special indentation."
   :if window-system
   :config
   (setq powerline-image-apple-rgb t
-        powerline-default-separator 'nil
+        powerline-default-separator 'wave
         powerline-text-scale-factor 0.90))
 
 (use-package spaceline
-  :config
-  ;; (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
-  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco"))
-
-(use-package spaceline-all-the-icons
-  :commands spaceline-all-the-icons-theme
+  :commands spaceline-spacemacs-theme
   :init
-  (add-hook 'after-init-hook 'spaceline-all-the-icons-theme)
+  (add-hook 'after-init-hook 'spaceline-spacemacs-theme)
   :config
-  (setq spaceline-all-the-icons-separator-type 'slant
-        spaceline-all-the-icons-icon-set-bookmark 'heart
-        spaceline-all-the-icons-icon-set-vc-icon-git 'gitlab
-        spaceline-all-the-icons-icon-set-window-numbering 'solid
-        spaceline-all-the-icons-icon-set-eyebrowse-slot 'string
-        spaceline-all-the-icons-icon-set-flycheck-slim 'outline
-        spaceline-all-the-icons-flycheck-alternate t
-        spaceline-all-the-icons-highlight-file-name t
-        spaceline-all-the-icons-hide-long-buffer-path t
-        spaceline-all-the-icons-primary-separator " "
-        spaceline-all-the-icons-secondary-separator " ")
-  (spaceline-all-the-icons--setup-anzu)
-  (spaceline-toggle-all-the-icons-time-off)
-  (spaceline-toggle-all-the-icons-minor-modes-off)
-  (spaceline-toggle-all-the-icons-package-updates-off)
-  (spaceline-toggle-all-the-icons-bookmark-on)
-  (spaceline-toggle-all-the-icons-nyan-cat-on)
-  (spaceline-toggle-all-the-icons-dedicated-on)
-  (spaceline-toggle-all-the-icons-window-number-on)
-  (spaceline-toggle-all-the-icons-buffer-position-on)
-  (spaceline-toggle-all-the-icons-eyebrowse-workspace-on))
+  (require 'spaceline-config)
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
+  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
+  (spaceline-toggle-minor-modes-off))
 
 (use-package window-numbering
   :after spaceline
@@ -1025,7 +1006,9 @@ Lisp function does not specify a special indentation."
          (python-mode . (lambda () (setq-local whitespace-line-column 79))))
   :init (global-whitespace-mode 1)
   :config
+  ;; TODO This function does not work well on light themes
   (defun zz-fix-whitespace ()
+    (interactive)
     "Fix whitespace-tab face (useful after changing themes)."
     (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
   (setq whitespace-style '(face trailing tabs tab-mark lines-tail))
@@ -1138,13 +1121,14 @@ Lisp function does not specify a special indentation."
     '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen)))
 
 (use-package hide-mode-line
+  :commands hide-mode-line-mode
   :hook ((completion-list-mode neotree-mode) . hide-mode-line-mode)
   :config
   (eval-after-load 'evil-ex
     '(evil-ex-define-cmd "mode[line]" 'hide-mode-line-mode)))
 
 (use-package centered-window
-  :after hide-mode-line
+  :commands centered-window-mode
   :config
   (setq cwm-centered-window-width 80)
   (eval-after-load 'evil-ex
@@ -1258,6 +1242,10 @@ Lisp function does not specify a special indentation."
    "rr" 'haskell-compile
    "ra" 'projectile-compile-project
    "rt" 'projectile-test-project))
+
+(use-package purescript-mode
+  :hook (purescript-mode . turn-on-purescript-indentation)
+  :diminish purescript-indentation-mode)
 
 (use-package elm-mode
   :init
@@ -1463,6 +1451,29 @@ Lisp function does not specify a special indentation."
 (use-package ox-hugo
   :after ox
   :demand t)
+
+(use-package ox-latex
+  :after ox
+  :demand t
+  :straight nil
+  :config
+  (setq org-latex-caption-above nil)
+  (setq org-latex-pdf-process '("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
+                                "bibtex $(basename %b)"
+                                "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
+                                "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+  (add-to-list 'org-latex-classes
+               `("llncs"
+                 "\\documentclass[runningheads]{llncs}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+\\renewcommand\\UrlFont{\\color{blue}\\rmfamily}
+[EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" "\\newpage" "\\subsection*{%s}" "\\newpage")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 ;; ox-reveal makes org easy templates not work
 (use-package ox-reveal
