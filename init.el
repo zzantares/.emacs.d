@@ -756,36 +756,38 @@ Lisp function does not specify a special indentation."
   (keyfreq-autosave-mode 1))
 
 (use-package neotree
+  :hook (neotree-mode . (lambda ()
+                          (setq buffer-face-mode-face '(:family "Hack" :height 130 :width semi-condensed))
+                          (buffer-face-mode)))
+  :commands neotree-make-executor
   :config
-  (setq neo-window-width 30
-        neo-theme (if (display-graphic-p) 'icons 'arrow))
-  (add-hook 'neotree-mode-hook
-            '(lambda ()
-               (interactive)
-               (setq buffer-face-mode-face '(:family "Hack" :height 130 :width semi-condensed))
-               (buffer-face-mode)))
+  (setq neo-smart-open nil
+        neo-window-width 30
+        neo-theme (if (display-graphic-p) 'icons 'arrow)
+        projectile-switch-project-action 'neotree-projectile-action)
   :general
   (:states 'normal "M-1" 'neotree-toggle)
   (:keymaps 'normal
-            :prefix "SPC"
-            "tl" 'neotree-toggle)
+   :prefix "SPC"
+   "tl" 'neotree-toggle)
   (:states 'normal
-           :keymaps 'neotree-mode-map
-           "o" 'neotree-enter
-           "md" 'neotree-delete-node
-           "ma" 'neotree-create-node
-           "mm" 'neotree-rename-node
-           "C" 'neotree-change-root
-           "R" 'neotree-refresh
-           "TAB" 'neotree-enter
-           "RET" 'neotree-enter
-           "?" 'describe-mode
-           "A" 'neotree-stretch-toggle
-           "H" 'neotree-hidden-file-toggle
-           "n" 'next-line
-           "p" 'previous-line
-           "q" 'neotree-hide
-           "u" 'neotree-select-up-node))
+   :keymaps 'neotree-mode-map
+   "o" (neotree-make-executor
+        :file-fn 'neo-open-file
+        :dir-fn  'neo-open-dir)
+   "md" 'neotree-delete-node
+   "ma" 'neotree-create-node
+   "mm" 'neotree-rename-node
+   "C" 'neotree-change-root
+   "R" 'neotree-refresh
+   "TAB" 'neotree-enter
+   "?" 'describe-mode
+   "A" 'neotree-stretch-toggle
+   "H" 'neotree-hidden-file-toggle
+   "n" 'next-line
+   "p" 'previous-line
+   "q" 'neotree-hide
+   "u" 'neotree-select-up-node))
 
 (use-package buffer-move
   :config
