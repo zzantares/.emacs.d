@@ -1157,6 +1157,7 @@ Lisp function does not specify a special indentation."
 (use-package web-mode
   :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.[agj]sp\\'" "\\.as[cp]x\\'" "\\.erb\\'" "\\.mustache\\'" "\\.djhtml\\'" "\\.html?\\'" "\\.css\\'")
   :config
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
   (setq web-mode-css-indent-offset 2
         web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2
@@ -1173,13 +1174,46 @@ Lisp function does not specify a special indentation."
   :mode "\\.js\\'"
   :interpreter "node"
   :config
-  (setq-default js2-basic-offset 2
+  (setq-default flycheck-disabled-checkers
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint)))
+  (setq-default js-indent-level 2
+                js-chain-indent t
+                js2-basic-offset 2
                 js2-strict-missing-semi-warning nil)
+  (js2-imenu-extras-mode))
+
+(use-package tern
+  :if (locate-file "tern" exec-path)
+  :hook ((js2-mode . tern-mode)
+         (rjsx-mode . tern-mode))
+  :config
   (add-to-list 'load-path "~/.config/yarn/global/node_modules/tern/emacs/tern.el")
-  (autoload 'tern-mode "tern.el" nil t)
-  (add-hook 'js2-mode-hook (lambda ()
-                             (tern-mode t)
-                             (js2-imenu-extras-mode))))
+  (autoload 'tern-mode "tern.el" nil t))
+
+(use-package rjsx-mode
+  :mode (("\\.jsx$" . rjsx-mode)
+         ("components/.+\\.js$" . rjsx-mode)))
+
+(use-package prettier-js
+  :hook ((js2-mode . prettier-js-mode)
+         (rjsx-mode . prettier-js-mode)))
+
+(use-package eslintd-fix
+  :hook ((js2-mode . eslintd-fix-mode)
+         (rjsx-mode . eslintd-fix-mode)
+         (js2-mode . zz-eslint-local-node-modules)
+         (rjsx-mode . zz-eslint-local-node-modules))
+  :config
+  (defun zz-eslint-local-node-modules ()
+    (let* ((root (locate-dominating-file
+                  (or (buffer-file-name) default-directory)
+                  "node_modules"))
+           (eslint (and root
+                        (expand-file-name "node_modules/.bin/eslint"
+                                          root))))
+      (when (and eslint (file-executable-p eslint))
+        (setq-local flycheck-javascript-eslint-executable eslint)))))
 
 (use-package plantuml-mode
   :mode "\\.plantuml\\'"
@@ -1303,10 +1337,12 @@ Lisp function does not specify a special indentation."
 
 (use-package company-tern
   :commands company-mode
-  :init
-  (add-hook 'js2-mode-hook '(lambda ()
-                              (set (make-local-variable 'company-backends) '(company-tern))
-                              (company-mode t))))
+  :hook (tern-mode . (lambda ()
+                       (set (make-local-variable 'company-backends) '(company-tern))
+                       (company-mode t)))
+  :config
+  (setq company-tern-property-marker nil
+        company-tooltip-align-annotations t))
 
 (use-package company-go
   :commands company-mode
@@ -1323,7 +1359,7 @@ Lisp function does not specify a special indentation."
 
 (use-package elpy
   :commands (flycheck-mode elpy-format-code)
-  :hook ((elpy-mode . flycheck-mode)
+  :hook ((elpy-mode . flycheck-mode) ;; TODO global-flycheck-mode does this?
          (python-mode . (lambda ()
                           (add-hook 'before-save-hook 'elpy-format-code
                                     nil
