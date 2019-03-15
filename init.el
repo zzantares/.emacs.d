@@ -487,6 +487,11 @@ Lisp function does not specify a special indentation."
       (concat "C-w " zz-motion-down) 'evil-window-down
       (concat "C-w " zz-motion-up) 'evil-window-up
       (concat "C-w " zz-motion-left) 'evil-window-left
+      (concat "C-w " (upcase zz-motion-up)) 'evil-window-move-very-top
+      (concat "C-w " (upcase zz-motion-down)) 'evil-window-move-very-bottom
+      (concat "C-w " (upcase zz-motion-left)) 'evil-window-move-far-left
+      (concat "C-w " (upcase zz-motion-right)) 'evil-window-move-far-right
+
 
       ;; Frames
       "C-w x" 'other-frame
@@ -788,16 +793,6 @@ Lisp function does not specify a special indentation."
    "p" 'previous-line
    "q" 'neotree-hide
    "u" 'neotree-select-up-node))
-
-(use-package buffer-move
-  :config
-  (setq buffer-move-stay-after-swap t)
-  :general
-  (:keymaps 'normal
-            (concat "C-w " (upcase zz-motion-up)) 'buf-move-up
-            (concat "C-w " (upcase zz-motion-down)) 'buf-move-down
-            (concat "C-w " (upcase zz-motion-left)) 'buf-move-left
-            (concat "C-w " (upcase zz-motion-right)) 'buf-move-right))
 
 (use-package yasnippet
   :diminish yas-minor-mode
@@ -1231,6 +1226,8 @@ Lisp function does not specify a special indentation."
 
 (use-package apib-mode
   :mode "\\.apib\\'")
+
+(use-package nginx-mode)
 
 (use-package fountain-mode)
 
