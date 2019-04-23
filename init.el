@@ -11,7 +11,6 @@
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
 ;; TODO: Org easy templates expansion not working with ox-reveal (https://github.com/yjwen/org-reveal/issues/323)
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
-;; TODO: For improve looks: https://github.com/hlissner/emacs-doom-themes
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
 ;; TODO: In haskell-mode pressing Y freezes Emacs https://github.com/expez/evil-smartparens/issues/50
 ;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
@@ -22,6 +21,10 @@
 ;; TODO: Move vanilla emacs configurations to the respective block (before org settings)
 ;; TODO: Dive in https://emacscast.org/ to find settings of org capture and ox-hugo
 ;; TODO: For PureScript https://github.com/kRITZCREEK/a-whole-new-world/blob/master/init.el#L360
+;; TODO: Keybinding to kill the buffer and then close the window.
+;; TODO: ':hook' can be used as a code block not a parenthesized expression?
+;; TODO: What about https://github.com/dbordak/telephone-line for powerline replacement?
+;; TODO: Add a function that does "vipgq" that is used frequently in org-mode.
 
 ;; ===================================================
 ;; NOTES & REMINDERS
@@ -879,6 +882,14 @@ Lisp function does not specify a special indentation."
   (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
   (spaceline-toggle-minor-modes-off))
 
+(use-package solaire-mode
+  :hook
+  ((aftechange-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+  (minibuffer-setup . solaire-mode-in-minibuffer)
+  :config
+  (setq solaire-mode-remap-modeline nil)
+  (solaire-global-mode +1))
+
 (use-package window-numbering
   :after spaceline
   :demand t
@@ -1115,7 +1126,9 @@ Lisp function does not specify a special indentation."
   (setq ns-use-native-fullscreen nil)
   :config
   (eval-after-load 'evil-ex
-    '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen)))
+    '(evil-ex-define-cmd "full[screen]" 'toggle-frame-fullscreen))
+  :general
+  ("M-RET" 'toggle-frame-maximized))
 
 (use-package hide-mode-line
   :commands hide-mode-line-mode
@@ -1532,6 +1545,7 @@ Lisp function does not specify a special indentation."
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
 (use-package molokai-theme :no-require t)
+(use-package kaolin-themes :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
 (use-package base16-theme :no-require t)
@@ -1557,9 +1571,15 @@ Lisp function does not specify a special indentation."
 (use-package chocolate-theme
   :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
   :no-require t)
-(use-package kaolin-themes
+(use-package doom-themes
   :demand t
-  :config (load-theme 'kaolin-ocean))
+  :config
+  (setq doom-themes-enable-bold t
+      doom-themes-enable-italic t)
+  (load-theme 'doom-nord)
+  (doom-themes-visual-bell-config)
+  (doom-themes-neotree-config)
+  (doom-themes-org-config))
 
 ;; ===================================================
 ;; GENERAL SETTINGS
@@ -1593,7 +1613,8 @@ Lisp function does not specify a special indentation."
 
 ;; Identation and line spaceing settings
 (setq tab-stop-list (number-sequence 4 200 4))
-(setq-default line-spacing 15
+(setq-default line-spacing 5
+              ;; line-spacing 15
               indent-tabs-mode nil
               tab-width 4)
 
@@ -1602,13 +1623,13 @@ Lisp function does not specify a special indentation."
 
 ;; Font settings
 ;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-(set-face-attribute 'default nil :height 200 :family "Consolas")
+;; (set-face-attribute 'default nil :height 200 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
 ;; (set-face-attribute 'default nil :height 150 :family "Monaco")
-;; (set-face-attribute 'default nil :height 150 :family "Menlo")
+(set-face-attribute 'default nil :height 180 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Fira Mono")
