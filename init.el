@@ -1235,6 +1235,18 @@ Lisp function does not specify a special indentation."
       (when (and eslint (file-executable-p eslint))
         (setq-local flycheck-javascript-eslint-executable eslint)))))
 
+(use-package typescript-mode
+  :mode ("\\.ts\\'" "\\.tsx\\'"))
+
+(use-package tide
+  :after (typescript-mode company flycheck)
+  :hook (typescript-mode . (lambda ()
+                             (tide-setup)
+                             (add-hook 'before-save-hook 'tide-format-before-save nil 'local)))
+  :config
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1))
+
 (use-package plantuml-mode
   :mode "\\.plantuml\\'"
   :config
@@ -1317,6 +1329,10 @@ Lisp function does not specify a special indentation."
 (use-package scala-mode
   :interpreter ("scala" . scala-mode)
   :hook (scala-mode . (lambda () (evil-smartparens-mode -1))))
+
+(use-package csharp-mode)
+
+(use-package fsharp-mode)
 
 (use-package solidity-mode)
 
@@ -1501,6 +1517,10 @@ Lisp function does not specify a special indentation."
             :states '(insert emacs)
             "C-c C-]" 'org-ref-insert-cite-with-completion
             "C-c ]" 'org-ref-insert-cite-with-completion))
+
+(use-package ob-fsharp
+  :after org
+  :demand t)
 
 (use-package ox-gfm
   :after ox
