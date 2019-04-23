@@ -1451,6 +1451,29 @@ Lisp function does not specify a special indentation."
    '(("^ +\\([-*]\\) "
       (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   :config
+  ;; Used for a smaller font in Org Export Dispatcher buffer
+  (defcustom org-export-dispatch-buffer-face '(:family "Hack" :height 140 :width semi-condensed)
+    "The face specification used by `buffer-face-mode'.
+It may contain any value suitable for a `face' text property,
+including a face name, a list of face names, a face-attribute
+plist, etc."
+    :type '(choice (face)
+                   (repeat :tag "List of faces" face)
+                   (plist :tag "Face property list"))
+    :group 'org-export)
+
+  (defun org-export-dispatch-set-font (&rest args)
+    "Set font for Org Export Dispatch Buffer."
+    (let ((buf (get-buffer "*Org Export Dispatcher*")))
+      (when buf
+        (with-current-buffer buf
+          (apply #'buffer-face-set org-export-dispatch-buffer-face)))))
+
+  (advice-add 'org-export--dispatch-action :before
+              #'org-export-dispatch-set-font)
+
+  ;; Other org config settings
+
   (require 'org-tempo)
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
@@ -1477,6 +1500,7 @@ Lisp function does not specify a special indentation."
             "op" 'org-set-property
             "os" 'org-schedule
             "ox" 'org-export-dispatch
+            "on" 'org-toggle-narrow-to-subtree
             "j" 'evil-join)
   (:keymaps 'org-mode-map :states '(insert normal)
             (concat "M-" zz-motion-up) 'org-metaup
