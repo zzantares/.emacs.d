@@ -1175,7 +1175,8 @@ Lisp function does not specify a special indentation."
    "ra" 'phpunit-current-project))
 
 (use-package web-mode
-  :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.[agj]sp\\'" "\\.as[cp]x\\'" "\\.erb\\'" "\\.mustache\\'" "\\.djhtml\\'" "\\.html?\\'" "\\.css\\'")
+  :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.erb\\'" "\\.djhtml\\'"
+         "\\.html?\\'" "\\.css\\'" "\\.html\\.eex\\'")
   :config
   (flycheck-add-mode 'javascript-eslint 'web-mode)
   (setq web-mode-css-indent-offset 2
@@ -1315,6 +1316,10 @@ Lisp function does not specify a special indentation."
   :hook (purescript-mode . turn-on-purescript-indentation)
   :diminish purescript-indentation-mode)
 
+(use-package psc-ide
+  :hook (purescript-mode . psc-ide-mode)
+  :config (setq psc-ide-editor-mode t))
+
 (use-package elm-mode
   :init
   (add-hook 'elm-mode-hook
@@ -1329,6 +1334,10 @@ Lisp function does not specify a special indentation."
 (use-package scala-mode
   :interpreter ("scala" . scala-mode)
   :hook (scala-mode . (lambda () (evil-smartparens-mode -1))))
+
+(use-package elixir-mode
+  :hook (elixir-mode . (lambda ()
+                         (add-hook 'before-save-hook 'elixir-format nil t))))
 
 (use-package csharp-mode)
 

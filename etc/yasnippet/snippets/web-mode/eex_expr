@@ -1,0 +1,5 @@
+# key: %
+# name: <% %>
+# condition: (string= web-mode-engine "elixir")
+# --
+<% $0 %>
