@@ -117,7 +117,9 @@
   "When in a project use projectile to find a file otherwise use counsel."
   (interactive)
   (if (projectile-project-p)
-      (counsel-projectile-find-file)
+      (if (projectile-file-exists-p ".git")
+          (counsel-git)
+        (counsel-projectile-find-file))
     (counsel-find-file)))
 
 (defun zz-toggle-dired ()
@@ -611,6 +613,7 @@ Lisp function does not specify a special indentation."
   :config
   (when (eq system-type 'darwin)
     (setq counsel-locate-cmd 'counsel-locate-cmd-mdfind))
+  (setq counsel-git-cmd "git ls-files --full-name --exclude-standard --others --cached --")
   (counsel-mode 1)
   (defalias 'locate #'counsel-locate)
   :general
@@ -675,18 +678,25 @@ Lisp function does not specify a special indentation."
 (use-package magit
   :commands magit-read-other-branch-or-commit
   :config
+  (defun zz/magit-status-with-prefix-arg ()
+    "Call `magit-status` with a prefix."
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (call-interactively #'magit-status)))
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
-        magit-save-repository-buffers nil)
+        magit-save-repository-buffers nil
+        magit-repository-directories '(("\~/workspace" . 2)))
   :general
   (:states 'normal
            :prefix "SPC"
            "gs" 'magit-status
+           "gS" 'zz/magit-status-with-prefix-arg
            "go" 'zz-magit-checkout
            "gl" 'magit-log-current
            "gb" 'magit-blame
            "gm" 'magit-merge
-           "gpl" 'magit-pull
-           "gps" 'magit-push
+           "gpl" 'magit-pull-branch
+           "gps" 'magit-push-other
            "mgr" 'magit-ediff-resolve))
 
 (use-package evil-magit
@@ -999,11 +1009,11 @@ Lisp function does not specify a special indentation."
   (define-key evil-multiedit-insert-state-map (kbd "[c") 'evil-multiedit-prev)
   :general
   (:keymaps 'normal
-   "M-n" 'evil-multiedit-match-and-next
-   "M-N" 'evil-multiedit-match-and-prev)
+   "M-d" 'evil-multiedit-match-and-next
+   "M-D" 'evil-multiedit-match-and-prev)
   (:keymaps 'visual
-   "M-n" 'evil-multiedit-match-and-next
-   "M-N" 'evil-multiedit-match-and-prev
+   "M-d" 'evil-multiedit-match-and-next
+   "M-D" 'evil-multiedit-match-and-prev
    "R" 'evil-multiedit-match-all))
 
 (use-package whitespace
