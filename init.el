@@ -744,10 +744,13 @@ Lisp function does not specify a special indentation."
   :config
   (evil-embrace-enable-evil-surround-integration))
 
-(use-package evil-lispy
-  :diminish evil-lispy-mode
-  :commands evil-lispy-mode
-  :hook (emacs-lisp-mode . evil-lispy-mode))
+(use-package lispy
+  :hook ((emacs-lisp-mode lisp-mode clojure-mode) . lispy-mode))
+
+(use-package lispyville
+  :hook (lispy-mode . lispyville-mode)
+  :config
+  (setq lispyville-motions-put-into-special t))
 
 (use-package keyfreq
   :config
@@ -891,6 +894,9 @@ Lisp function does not specify a special indentation."
   (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
   (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
   (spaceline-toggle-minor-modes-off))
+
+(use-package rainbow-delimiters
+  :hook (clojure-mode . rainbow-delimiters-mode))
 
 (use-package solaire-mode
   :hook
@@ -1334,6 +1340,10 @@ Lisp function does not specify a special indentation."
 (use-package scala-mode
   :interpreter ("scala" . scala-mode)
   :hook (scala-mode . (lambda () (evil-smartparens-mode -1))))
+
+(use-package clojure-mode)
+
+(use-package cider)
 
 (use-package elixir-mode
   :hook (elixir-mode . (lambda ()
