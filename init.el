@@ -1468,6 +1468,8 @@ Lisp function does not specify a special indentation."
 ;; ===================================================
 
 (use-package org
+  :hook (org-mode . (lambda ()
+                      (org-display-inline-images t t)))
   :init
   (setq org-emphasis-regexp-components '("-[:space:][:alpha:]('\"{"
                                          "-[:space:][:alpha:].,:!?;'\")}\\["
@@ -1507,19 +1509,25 @@ plist, etc."
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (org-babel-do-load-languages 'org-babel-load-languages
                                '((plantuml . t)
+                                 (dot . t)
                                  (python . t)
                                  (ruby . t)
                                  (awk . t)
                                  (emacs-lisp . t)
-                                 (haskell . t)))
+                                 (haskell . t)
+                                 (clojure . t)))
   (setq org-log-done t
         org-ellipsis " ⤵"
+        org-edit-src-content-indentation 0
         org-src-fontify-natively t
+        org-src-tab-acts-natively t
+        org-html-htmlize-output-type 'css
         org-todo-keywords '((sequence "TODO" "IN-PROGRESS"
                                       "|" "DONE" "DELEGATED" "CANCELED"))
         org-agenda-files (list "~/Documents/org/free.org"
                                "~/Documents/org/paid.org"
-                               "~/Documents/org/todo.org"))
+                               "~/Documents/org/todo.org")
+        org-babel-clojure-backend 'cider)
   :general
   (:keymaps 'normal :prefix "SPC"
             "oa" 'org-agenda)
