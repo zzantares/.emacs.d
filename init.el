@@ -16,7 +16,6 @@
 ;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
 ;; TODO: Fix defer issues with centered-window-mode and hide-mode-line
 ;; TODO: Try out "sebastiencs/omnibox"
-;; TODO: Use M-RET for fullscreen, maximized and normal window toggle?
 ;; TODO: How about using flyspell-prog-mode?
 ;; TODO: Move vanilla emacs configurations to the respective block (before org settings)
 ;; TODO: Dive in https://emacscast.org/ to find settings of org capture and ox-hugo
@@ -46,6 +45,8 @@
 (menu-bar-mode -1)
 (set-scroll-bar-mode nil)
 (tool-bar-mode -1)
+
+(setq straight-recipes-gnu-elpa-use-mirror t)
 
 ;; Straight.el
 (defvar bootstrap-version)
@@ -1617,6 +1618,7 @@ plist, etc."
 (use-package eziam-theme :no-require t)
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
+(use-package minimal-theme :no-require t)
 (use-package molokai-theme :no-require t)
 (use-package kaolin-themes :no-require t)
 (use-package gruvbox-theme :no-require t)
@@ -1636,8 +1638,6 @@ plist, etc."
 (use-package anti-zenburn-theme :no-require t)
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
-(use-package green-phosphor-theme :no-require t)
-(use-package green-phosphor-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
@@ -1649,7 +1649,7 @@ plist, etc."
   :config
   (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
-  (load-theme 'doom-nord)
+  (load-theme 'doom-city-lights)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
   (doom-themes-org-config))
@@ -1701,8 +1701,8 @@ plist, etc."
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
-;; (set-face-attribute 'default nil :height 150 :family "Monaco")
-(set-face-attribute 'default nil :height 180 :family "Menlo")
+(set-face-attribute 'default nil :height 175 :family "Monaco")
+;; (set-face-attribute 'default nil :height 180 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Fira Mono")
