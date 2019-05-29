@@ -1183,7 +1183,7 @@ Lisp function does not specify a special indentation."
 
 (use-package web-mode
   :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.erb\\'" "\\.djhtml\\'"
-         "\\.html?\\'" "\\.css\\'" "\\.html\\.eex\\'")
+         "\\.html?\\'" "\\.css\\'" "\\.html\\.eex\\'" "\\.tsx\\'")
   :config
   (flycheck-add-mode 'javascript-eslint 'web-mode)
   (setq web-mode-css-indent-offset 2
@@ -1216,8 +1216,17 @@ Lisp function does not specify a special indentation."
   :hook ((js2-mode . tern-mode)
          (rjsx-mode . tern-mode))
   :config
-  (add-to-list 'load-path "~/.config/yarn/global/node_modules/tern/emacs/tern.el")
-  (autoload 'tern-mode "tern.el" nil t))
+  (defun zz-find-tern ()
+    "Finds the tern.el file in the correct node_modules folder."
+    (let* ((node-version (comment-string-strip
+                          (shell-command-to-string "node --version") t t))
+           (node-modules (concat
+                          "~/.nvm/versions/node/" node-version "/lib/node_modules")))
+      (locate-file "tern/emacs/tern.el" (list node-modules))))
+  (when-let
+      ((tern-location (zz-find-tern)))
+    (add-to-list 'load-path tern-location)
+    (autoload 'tern-mode "tern.el" nil t)))
 
 (use-package rjsx-mode
   :mode (("\\.jsx$" . rjsx-mode)
@@ -1244,13 +1253,19 @@ Lisp function does not specify a special indentation."
         (setq-local flycheck-javascript-eslint-executable eslint)))))
 
 (use-package typescript-mode
-  :mode ("\\.ts\\'" "\\.tsx\\'"))
+  :mode ("\\.ts\\'"))
 
 (use-package tide
   :after (typescript-mode company flycheck)
-  :hook (typescript-mode . (lambda ()
-                             (tide-setup)
-                             (add-hook 'before-save-hook 'tide-format-before-save nil 'local)))
+  :hook ((typescript-mode . (lambda ()
+                              (tide-setup)
+                              (add-hook 'before-save-hook
+                                        'tide-format-before-save nil 'local)))
+         (web-mode . (lambda ()
+                       (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                         (tide-setup)
+                         (add-hook 'before-save-hook
+                                   'tide-format-before-save nil 'local)))))
   :config
   (eldoc-mode +1)
   (tide-hl-identifier-mode +1))
@@ -1352,7 +1367,9 @@ Lisp function does not specify a special indentation."
 
 (use-package csharp-mode)
 
-(use-package fsharp-mode)
+(use-package fsharp-mode
+  :config
+  (setq-default fsharp-indent-offset 2))
 
 (use-package solidity-mode)
 
