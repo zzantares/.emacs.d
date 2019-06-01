@@ -483,8 +483,8 @@ Lisp function does not specify a special indentation."
     (zz-scroll-half-page nil))
 
   (general-define-key :states 'motion
-      zz-motion-up 'evil-previous-line
-      zz-motion-down 'evil-next-line
+      zz-motion-up 'evil-previous-visual-line
+      zz-motion-down 'evil-next-visual-line
       zz-motion-left 'evil-backward-char
       zz-motion-right 'evil-forward-char
       "<escape>" 'keyboard-quit
@@ -624,7 +624,7 @@ Lisp function does not specify a special indentation."
    "mx" 'counsel-M-x
    "ff" 'counsel-find-file
    "fr" 'counsel-recentf
-   "fw" 'swiper
+   "fw" 'swiper-isearch
    "kr" 'counsel-yank-pop))
 
 (use-package projectile
@@ -1026,10 +1026,11 @@ Lisp function does not specify a special indentation."
 (use-package whitespace
   :diminish global-whitespace-mode
   :hook ((web-mode . (lambda () (setq-local whitespace-line-column 101)))
-         (prog-mode . (lambda () (setq-local whitespace-line-column 80)))
          (java-mode . (lambda () (setq-local whitespace-line-column 100)))
-         (python-mode . (lambda () (setq-local whitespace-line-column 79))))
-  :init (global-whitespace-mode 1)
+         (python-mode . (lambda () (setq-local whitespace-line-column 79)))
+         (prog-mode . (lambda ()
+                        (setq-local whitespace-line-column 80)
+                        (whitespace-mode 1))))
   :config
   ;; TODO This function does not work well on light themes
   (defun zz-fix-whitespace ()
@@ -1043,11 +1044,12 @@ Lisp function does not specify a special indentation."
 (use-package simple
   :straight nil
   :diminish auto-fill-function
-  :hook ((java-mode . (lambda () (set-fill-column 110)))
+  :hook ((text-mode . visual-line-mode)
+         (java-mode . (lambda () (set-fill-column 110)))
          (python-mode . (lambda () (set-fill-column 79)))
-         ((markdown-mode org-mode prog-mode) . (lambda ()
-                                                 (turn-on-auto-fill)
-                                                 (set-fill-column 80))))
+         (prog-mode . (lambda ()
+                        (turn-on-auto-fill)
+                        (set-fill-column 80))))
   :general
   (:states 'normal :keymaps 'messages-buffer-mode-map
            "q" 'evil-buffer
@@ -1090,8 +1092,8 @@ Lisp function does not specify a special indentation."
                (evil-define-key 'motion help-mode-map (kbd "gb") 'evil-buffer)
                (evil-define-key 'motion help-mode-map (kbd zz-motion-left) 'evil-backward-char)
                (evil-define-key 'motion help-mode-map (kbd zz-motion-right) 'evil-forward-char)
-               (evil-define-key 'motion help-mode-map (kbd zz-motion-down) 'evil-next-line)
-               (evil-define-key 'motion help-mode-map (kbd zz-motion-up) 'evil-previous-line))))
+               (evil-define-key 'motion help-mode-map (kbd zz-motion-down) 'evil-next-visual-line)
+               (evil-define-key 'motion help-mode-map (kbd zz-motion-up) 'evil-previous-visual-line))))
 
 (use-package eshell
   :straight nil
