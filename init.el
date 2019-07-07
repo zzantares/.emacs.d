@@ -942,7 +942,11 @@ Lisp function does not specify a special indentation."
   (eyebrowse-setup-opinionated-keys)
   :general
   (:states 'normal :keymaps '(messages-buffer-mode-map dired-mode-map)
-           "gt" 'eyebrowse-next-window-config)
+   "gt" 'eyebrowse-next-window-config
+   "gT" 'eyebrowse-prev-window-config)
+  (:keymaps 'normal
+   "C-}" 'eyebrowse-next-window-config
+   "C-{" 'eyebrowse-prev-window-config)
   (:keymaps 'normal :prefix "SPC"
             "t0" 'eyebrowse-switch-to-window-config-0
             "t1" 'eyebrowse-switch-to-window-config-1
@@ -1238,7 +1242,7 @@ Lisp function does not specify a special indentation."
          (rjsx-mode . tern-mode))
   :config
   (defun zz-find-tern ()
-    "Finds the tern.el file in the correct node_modules folder."
+    "Finds the tern.el file in the correct NVM node_modules folder."
     (let* ((node-version (comment-string-strip
                           (shell-command-to-string "node --version") t t))
            (node-modules (concat
@@ -1255,7 +1259,8 @@ Lisp function does not specify a special indentation."
 
 (use-package prettier-js
   :hook ((js2-mode . prettier-js-mode)
-         (rjsx-mode . prettier-js-mode)))
+         (rjsx-mode . prettier-js-mode)
+         (typescript-mode . prettier-js-mode)))
 
 (use-package eslintd-fix
   :hook ((js2-mode . eslintd-fix-mode)
@@ -1275,10 +1280,15 @@ Lisp function does not specify a special indentation."
         (setq-local flycheck-javascript-eslint-executable eslint)))))
 
 (use-package typescript-mode
-  :mode ("\\.ts\\'"))
+  :mode ("\\.ts\\'")
+  :config
+  (setq typescript-indent-level 2)
+  :general
+  (:keymaps 'typescript-mode-map :states 'insert
+   "RET" 'c-indent-new-comment-line))
 
 (use-package tide
-  :after (typescript-mode company flycheck)
+  :after (company flycheck)
   :hook ((typescript-mode . (lambda ()
                               (tide-setup)
                               (add-hook 'before-save-hook
