@@ -210,8 +210,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defun zz-file-stats ()
   "Gives the filename, current line and column of point."
   (interactive)
-  (let* (
-         (cursor-position (what-cursor-position))
+  (let* ((cursor-position (what-cursor-position))
          (line (what-line))
          (percent ((lambda ()
                      (string-match "\\([0-9]+\\)%" cursor-position)
@@ -424,14 +423,16 @@ Lisp function does not specify a special indentation."
         version-control t)
   (setq backup-directory-alist
         `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
+  (setq auto-save-list-file-prefix
+        (no-littering-expand-var-file-name "auto-save/"))
   (setq auto-save-file-name-transforms
         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (load custom-file 'noerror))
 
 (use-package exec-path-from-shell
-  :defer 3
   :if (memq window-system '(mac ns x))
+  :demand
   :config
   (dolist (envvar '("GOPATH" "GOROOT"))
     (add-to-list 'exec-path-from-shell-variables envvar))
@@ -445,6 +446,7 @@ Lisp function does not specify a special indentation."
   (general-define-key :states 'motion "M-," 'zz-preferences)
   (general-define-key :states 'normal :prefix "SPC"
     "q" 'zz-quit-help-like-windows
+    "u" 'universal-argument
     "hk" 'describe-key
     "hm" 'describe-mode
     "hb" 'describe-bindings
@@ -461,6 +463,8 @@ Lisp function does not specify a special indentation."
 
 (use-package evil
   :demand t
+  :init
+  (setq evil-respect-visual-line-mode t)
   :custom
   (evil-want-C-u-scroll t)
   (evil-want-Y-yank-to-eol t)
@@ -483,58 +487,58 @@ Lisp function does not specify a special indentation."
     (zz-scroll-half-page nil))
 
   (general-define-key :states 'motion
-      zz-motion-up 'evil-previous-visual-line
-      zz-motion-down 'evil-next-visual-line
-      zz-motion-left 'evil-backward-char
-      zz-motion-right 'evil-forward-char
-      "<escape>" 'keyboard-quit
+    zz-motion-up 'evil-previous-line
+    zz-motion-down 'evil-next-line
+    zz-motion-left 'evil-backward-char
+    zz-motion-right 'evil-forward-char
+    "<escape>" 'keyboard-quit
 
-      ;; Windows
-      (concat "C-w " zz-motion-down) 'evil-window-down
-      (concat "C-w " zz-motion-up) 'evil-window-up
-      (concat "C-w " zz-motion-left) 'evil-window-left
-      (concat "C-w " (upcase zz-motion-up)) 'evil-window-move-very-top
-      (concat "C-w " (upcase zz-motion-down)) 'evil-window-move-very-bottom
-      (concat "C-w " (upcase zz-motion-left)) 'evil-window-move-far-left
-      (concat "C-w " (upcase zz-motion-right)) 'evil-window-move-far-right
+    ;; Windows
+    (concat "C-w " zz-motion-down) 'evil-window-down
+    (concat "C-w " zz-motion-up) 'evil-window-up
+    (concat "C-w " zz-motion-left) 'evil-window-left
+    (concat "C-w " (upcase zz-motion-up)) 'evil-window-move-very-top
+    (concat "C-w " (upcase zz-motion-down)) 'evil-window-move-very-bottom
+    (concat "C-w " (upcase zz-motion-left)) 'evil-window-move-far-left
+    (concat "C-w " (upcase zz-motion-right)) 'evil-window-move-far-right
 
 
-      ;; Frames
-      "C-w x" 'other-frame
-      "C-w f" 'make-frame-command
+    ;; Frames
+    "C-w x" 'other-frame
+    "C-w f" 'make-frame-command
 
-      "M-v" 'evil-paste-after)
+    "M-v" 'evil-paste-after)
 
   (general-define-key :keymaps 'normal
-            "M-s" 'evil-write
-            "C-s" 'evil-write
-            "gV" 'zz-evil-select-pasted
-            "zv" 'zz-scroll-line-to-quarter
-            "RET" 'newline
-            "ga" 'zz-file-stats
+    "M-s" 'evil-write
+    "C-s" 'evil-write
+    "gV" 'zz-evil-select-pasted
+    "zv" 'zz-scroll-line-to-quarter
+    "RET" 'newline
+    "ga" 'zz-file-stats
 
-            ;; Buffer navigation
-            "gb" 'evil-buffer
-            "gr" 'revert-buffer
-            "M-{" 'evil-prev-buffer
-            "M-}" 'evil-next-buffer
-            "C-a k" 'zz-kill-buffer
-            "C-a c" 'zz-kill-other-buffers
-            "C-a d" 'zz-evil-window-delete-or-die)
+    ;; Buffer navigation
+    "gb" 'evil-buffer
+    "gr" 'revert-buffer
+    "M-{" 'evil-prev-buffer
+    "M-}" 'evil-next-buffer
+    "C-a k" 'zz-kill-buffer
+    "C-a c" 'zz-kill-other-buffers
+    "C-a d" 'zz-evil-window-delete-or-die)
 
   (general-define-key :keymaps 'insert
-            "M-s" 'zz-save-to-escape
-            "C-s" 'zz-save-to-escape
-            "M-v" 'evil-paste-after)
+    "M-s" 'zz-save-to-escape
+    "C-s" 'zz-save-to-escape
+    "M-v" 'evil-paste-after)
 
   (general-define-key :keymaps 'visual
-            "M-c" 'evil-yank
-            "M-v" 'evil-visual-paste)
+    "M-c" 'evil-yank
+    "M-v" 'evil-visual-paste)
 
   (general-define-key :keymaps '(minibuffer-local-map minibuffer-local-ns-map
-  minibuffer-local-completion-map minibuffer-local-must-match-map
-  minibuffer-local-isearch-map)
-            "<escape>" 'zz-minibuffer-keyboard-quit))
+                                                      minibuffer-local-completion-map minibuffer-local-must-match-map
+                                                      minibuffer-local-isearch-map)
+    "<escape>" 'zz-minibuffer-keyboard-quit))
 
 (use-package minibuffer
   :straight nil
@@ -968,16 +972,19 @@ Lisp function does not specify a special indentation."
   (set-face-foreground 'git-gutter:modified "#b58900")
   (set-face-foreground 'git-gutter:added "#859900")
   (set-face-foreground 'git-gutter:deleted "#dc322f")
-  (set-face-font 'git-gutter:modified "Menlo")
-  (set-face-font 'git-gutter:added "Menlo")
-  (set-face-font 'git-gutter:deleted "Menlo")
+  (let* ((gutter-font (if (eq system-type 'darwin)
+                           "Menlo"
+                         "Consolas")))
+    (set-face-font 'git-gutter:modified gutter-font)
+    (set-face-font 'git-gutter:added gutter-font)
+    (set-face-font 'git-gutter:deleted gutter-font))
   :general
   (:keymaps 'normal
-            "]h" 'git-gutter:next-hunk
-            "[h" 'git-gutter:previous-hunk)
+   "]h" 'git-gutter:next-hunk
+   "[h" 'git-gutter:previous-hunk)
   (:keymaps 'normal :prefix "SPC"
-            "ga" 'zz-git-gutter-stage-hunk
-            "gr" 'git-gutter:revert-hunk))
+   "ga" 'zz-git-gutter-stage-hunk
+   "gr" 'git-gutter:revert-hunk))
 
 (use-package evil-anzu
   :after evil
@@ -1171,7 +1178,6 @@ Lisp function does not specify a special indentation."
 ;; ===================================================
 
 (use-package cask-mode)
-(use-package json-mode)
 (use-package dockerfile-mode)
 (use-package php-mode)
 
@@ -1199,6 +1205,10 @@ Lisp function does not specify a special indentation."
   (add-hook 'ruby-mode-hook 'global-rbenv-mode)
   :config
   (setq rbenv-show-active-ruby-in-modeline nil))
+
+(use-package json-mode
+  :config
+  (setq js-indent-level 2))
 
 (use-package js2-mode
   :mode "\\.js\\'"
@@ -1245,6 +1255,7 @@ Lisp function does not specify a special indentation."
          (rjsx-mode . zz-eslint-local-node-modules))
   :config
   (defun zz-eslint-local-node-modules ()
+    "Get the eslint executable from the local node_modules in the project."
     (let* ((root (locate-dominating-file
                   (or (buffer-file-name) default-directory)
                   "node_modules"))
@@ -1514,6 +1525,7 @@ plist, etc."
                                  (dot . t)
                                  (python . t)
                                  (ruby . t)
+                                 (http . t)
                                  (awk . t)
                                  (emacs-lisp . t)
                                  (haskell . t)
@@ -1589,7 +1601,15 @@ plist, etc."
             "C-c C-]" 'org-ref-insert-cite-with-completion
             "C-c ]" 'org-ref-insert-cite-with-completion))
 
+(use-package org-evil
+  ;; TODO: Alternative package https://github.com/Somelauw/evil-org-mode
+  )
+
 (use-package ob-fsharp
+  :after org
+  :demand t)
+
+(use-package ob-http
   :after org
   :demand t)
 
@@ -1676,7 +1696,7 @@ plist, etc."
   :config
   (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
-  (load-theme 'doom-city-lights)
+  (load-theme 'doom-challenger-deep)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
   (doom-themes-org-config))
