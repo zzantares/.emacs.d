@@ -561,9 +561,9 @@ Lisp function does not specify a special indentation."
 (use-package dired
   :straight nil
   :commands (auto-revert-mode zz-dired-sort-directories-first)
-  :init
-  (add-hook 'dired-mode-hook 'auto-revert-mode)
-  (add-hook 'dired-after-readin-hook 'zz-dired-sort-directories-first)
+  :hook ((dired-mode . dired-hide-details-mode)
+         (dired-mode . auto-revert-mode)
+         (dired-after-readin . zz-dired-sort-directories-first))
   :config
   (setq dired-dwim-target t)
   (put 'dired-find-alternate-file 'disabled nil)
@@ -618,7 +618,8 @@ Lisp function does not specify a special indentation."
   :config
   (when (eq system-type 'darwin)
     (setq counsel-locate-cmd 'counsel-locate-cmd-mdfind))
-  (setq counsel-git-cmd "git ls-files --full-name --exclude-standard --others --cached --")
+  (setq counsel-git-cmd "git ls-files --full-name --exclude-standard --others --cached --"
+        counsel-find-file-ignore-regexp "\\(?:\\`\\|[/\\]\\)\\(?:[#.]\\)")
   (counsel-mode 1)
   (defalias 'locate #'counsel-locate)
   :general
@@ -650,7 +651,7 @@ Lisp function does not specify a special indentation."
   (:states 'normal
    "C-p" 'zz-find-file)
   (:states 'normal :prefix "SPC"
-   "ag" 'counsel-projectile-rg))
+   "rg" 'counsel-projectile-rg))
 
 (use-package flyspell
   :straight nil
@@ -843,12 +844,23 @@ Lisp function does not specify a special indentation."
             :prefix "]"
             "e" 'flycheck-next-error))
 
+(use-package avy
+  :config
+  (avy-setup-default)
+  (setq avy-keys '(?a ?r ?s ?t ?d ?h ?n ?e ?i ?o)
+        avy-timeout-seconds 0.4)
+  :general
+  (:keymaps 'normal :prefix "SPC"
+   "SPC" 'avy-goto-char-timer
+   "go" 'avy-goto-char-2))
+
 (use-package smartparens
   :defer 3
   :diminish smartparens-mode
   :commands smartparens-mode
   :hook (prog-mode . smartparens-mode)
   :config
+  (setq sp-autoskip-closing-pair (quote always))
   (require 'smartparens-config)
   (sp-with-modes 'emacs-lisp-mode
     (sp-local-pair "'" nil :actions nil)
@@ -1122,9 +1134,6 @@ Lisp function does not specify a special indentation."
 
 (use-package term
   :straight nil
-  :init
-  (add-hook 'term-mode-hook
-            '(lambda () (add-hook 'evil-insert-state-entry-hook 'zz-shell-insert nil t)))
   :general
   (:keymaps 'normal :prefix "SPC"
             "zsh" 'zz-zshell-current-dir))
@@ -1340,7 +1349,7 @@ Lisp function does not specify a special indentation."
           haskell-compile-cabal-build-command (concat "cd %s && " stack-command)
           projectile-project-compilation-cmd stack-command
           projectile-project-test-cmd (concat stack-command " --test")
-          flycheck-ghc-language-extensions '("OverloadedStrings")))
+          flycheck-ghc-language-extensions '("OverloadedStrings" "NamedFieldPuns")))
   :general
   (:keymaps 'haskell-mode-map :states 'normal :prefix "SPC"
    "rr" 'haskell-compile
