@@ -262,9 +262,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defun zz-evil-select-pasted ()
   "Visually select last pasted text."
   (interactive)
-  (evil-goto-mark ?[)
+  (evil-goto-mark ?\[)
   (evil-visual-char)
-  (evil-goto-mark ?]))
+  (evil-goto-mark ?\]))
 
 (defun zz-quit-help-like-windows (&optional kill frame)
   "Quit all windows with help-like buffers.
