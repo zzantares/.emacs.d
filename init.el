@@ -1013,7 +1013,8 @@ Lisp function does not specify a special indentation."
 
 (use-package all-the-icons
   :config
-  (require 'font-lock+))
+  (require 'font-lock+)
+  (setq all-the-icons-scale-factor 1.0))
 
 (use-package all-the-icons-dired
   :commands all-the-icons-dired-mode
@@ -1260,7 +1261,9 @@ Lisp function does not specify a special indentation."
 (use-package prettier-js
   :hook ((js2-mode . prettier-js-mode)
          (rjsx-mode . prettier-js-mode)
-         (typescript-mode . prettier-js-mode)))
+         (typescript-mode . prettier-js-mode))
+  :config
+  (setq prettier-js-args '("--single-quote" "true")))
 
 (use-package eslintd-fix
   :hook ((js2-mode . eslintd-fix-mode)
@@ -1288,7 +1291,7 @@ Lisp function does not specify a special indentation."
    "RET" 'c-indent-new-comment-line))
 
 (use-package tide
-  :after (company flycheck)
+  :after company flycheck
   :hook ((typescript-mode . (lambda ()
                               (tide-setup)
                               (add-hook 'before-save-hook
@@ -1714,7 +1717,7 @@ plist, etc."
   :demand t
   :config
   (setq doom-themes-enable-bold t
-      doom-themes-enable-italic t)
+        doom-themes-enable-italic t)
   (load-theme 'doom-challenger-deep)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
