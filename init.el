@@ -782,39 +782,66 @@ Lisp function does not specify a special indentation."
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
 
-(use-package neotree
-  :hook (neotree-mode . (lambda ()
-                          (setq buffer-face-mode-face '(:family "Hack" :height 130 :width semi-condensed))
-                          (buffer-face-mode)))
-  :commands neotree-make-executor
+(use-package treemacs
   :config
-  (setq neo-smart-open nil
-        neo-window-width 30
-        neo-theme (if (display-graphic-p) 'icons 'arrow)
-        projectile-switch-project-action 'neotree-projectile-action)
+  (setq treemacs-width 30
+        treemacs-silent-refresh t
+        treemacs-silent-filewatch t
+        treemacs-file-event-delay 1000
+        treemacs-sorting 'alphabetic-case-insensitive-desc
+        treemacs-persist-file (no-littering-expand-var-file-name "treemacs"))
+  (dolist (face '(treemacs-root-face
+                  treemacs-git-unmodified-face
+                  treemacs-git-modified-face
+                  treemacs-git-renamed-face
+                  treemacs-git-ignored-face
+                  treemacs-git-untracked-face
+                  treemacs-git-added-face
+                  treemacs-git-conflict-face
+                  treemacs-directory-face
+                  treemacs-directory-collapsed-face
+                  treemacs-file-face
+                  treemacs-tags-face))
+    (set-face-attribute face nil :family "Helvetica" :height 160))
   :general
-  (:states 'normal "M-1" 'neotree-toggle)
-  (:keymaps 'normal
-   :prefix "SPC"
-   "tl" 'neotree-toggle)
-  (:states 'normal
-   :keymaps 'neotree-mode-map
-   "o" (neotree-make-executor
-        :file-fn 'neo-open-file
-        :dir-fn  'neo-open-dir)
-   "md" 'neotree-delete-node
-   "ma" 'neotree-create-node
-   "mm" 'neotree-rename-node
-   "C" 'neotree-change-root
-   "R" 'neotree-refresh
-   "TAB" 'neotree-enter
-   "?" 'describe-mode
-   "A" 'neotree-stretch-toggle
-   "H" 'neotree-hidden-file-toggle
-   "n" 'next-line
-   "p" 'previous-line
-   "q" 'neotree-hide
-   "u" 'neotree-select-up-node))
+  (:states 'normal "M-1" 'treemacs)
+  (:states 'normal :prefix "SPC"
+   "tl" 'treemacs)
+  (:states 'normal :keymaps 'treemacs-mode-map
+   "o" 'treemacs-RET-action
+   "l" 'treemacs-TAB-action
+   "C-k" 'treemacs-next-project
+   "C-h" 'treemacs-previous-project
+   "C-j" 'treemacs-switch-workspace
+   "C-l" 'treemacs-switch-workspace
+   "M-," 'treemacs-edit-workspaces
+   "v" 'treemacs-visit-node-vertical-split
+   "s" 'treemacs-visit-node-horizontal-split
+   "O" 'treemacs-visit-node-in-external-application
+   "H" 'treemacs-toggle-show-dotfiles
+   "j" 'treemacs-collapse-parent-node
+   "J" 'treemacs-goto-parent-node
+   "mm" 'treemacs-move-file
+   "mr" 'treemacs-rename
+   "md" 'treemacs-delete
+   "ma" 'treemacs-create-dir
+   "mf" 'treemacs-create-file
+   "q" 'treemacs-quit
+   "u" 'treemacs-root-up
+   "C" 'treemacs-root-down
+   "yy" 'treemacs-copy-path-at-point
+   "yr" 'treemacs-copy-project-root
+   "yf" 'treemacs-copy-file
+   "b" 'treemacs-bookmark))
+
+(use-package treemacs-evil
+  :after evil treemacs)
+
+(use-package treemacs-projectile
+  :after treemacs projectile)
+
+(use-package treemacs-magit
+  :after treemacs magit)
 
 (use-package yasnippet
   :diminish yas-minor-mode
@@ -1172,7 +1199,7 @@ Lisp function does not specify a special indentation."
 
 (use-package hide-mode-line
   :commands hide-mode-line-mode
-  :hook ((completion-list-mode neotree-mode) . hide-mode-line-mode)
+  :hook (completion-list-mode . hide-mode-line-mode)
   :config
   (eval-after-load 'evil-ex
     '(evil-ex-define-cmd "mode[line]" 'hide-mode-line-mode)))
@@ -1719,8 +1746,8 @@ plist, etc."
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
   (load-theme 'doom-challenger-deep)
+  (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
   (doom-themes-org-config))
 
 ;; ===================================================
