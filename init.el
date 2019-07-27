@@ -1659,6 +1659,7 @@ plist, etc."
   :demand t)
 
 (use-package ob-http
+  :straight (ob-http :type git :host github :repo "zweifisch/ob-http")
   :after org
   :demand t)
 
