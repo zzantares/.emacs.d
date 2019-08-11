@@ -607,7 +607,7 @@ Lisp function does not specify a special indentation."
   :general
   (:states 'normal :prefix "SPC"
           "ls" 'ivy-switch-buffer)
-  (:keymaps 'ivy-minibuffer-map
+  (:keymaps '(ivy-minibuffer-map ivy-mode-map)
    [escape] 'keyboard-escape-quit
    "C-w" 'backward-kill-word
    (concat "C-" zz-motion-down) 'ivy-next-line
@@ -811,10 +811,10 @@ Lisp function does not specify a special indentation."
   (:states 'normal :keymaps 'treemacs-mode-map
    "o" 'treemacs-RET-action
    "l" 'treemacs-TAB-action
-   "C-k" 'treemacs-next-project
-   "C-h" 'treemacs-previous-project
-   "C-j" 'treemacs-switch-workspace
-   "C-l" 'treemacs-switch-workspace
+   (concat "C-" zz-motion-down) 'treemacs-next-project
+   (concat "C-" zz-motion-up) 'treemacs-previous-project
+   (concat "C-" zz-motion-left) 'treemacs-switch-workspace
+   (concat "C-" zz-motion-right) 'treemacs-switch-workspace
    "M-," 'treemacs-edit-workspaces
    "v" 'treemacs-visit-node-vertical-split
    "s" 'treemacs-visit-node-horizontal-split
@@ -1391,7 +1391,10 @@ Lisp function does not specify a special indentation."
           haskell-compile-cabal-build-command (concat "cd %s && " stack-command)
           projectile-project-compilation-cmd stack-command
           projectile-project-test-cmd (concat stack-command " --test")
-          flycheck-ghc-language-extensions '("OverloadedStrings" "NamedFieldPuns")))
+          flycheck-ghc-language-extensions '("OverloadedStrings"
+                                             "NamedFieldPuns"
+                                             "FlexibleInstances"
+                                             "FlexibleContexts")))
   :general
   (:keymaps 'haskell-mode-map :states 'normal :prefix "SPC"
    "rr" 'haskell-compile
