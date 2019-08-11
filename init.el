@@ -759,6 +759,7 @@ Lisp function does not specify a special indentation."
   (setq lispyville-motions-put-into-special t))
 
 (use-package keyfreq
+  :defer 3
   :config
   (setq keyfreq-excluded-commands
         '(self-insert-command
@@ -1040,6 +1041,7 @@ Lisp function does not specify a special indentation."
 
 (use-package all-the-icons
   :config
+  ;; TODO Add after: font-lock+ instead?
   (require 'font-lock+)
   (setq all-the-icons-scale-factor 1.0))
 
@@ -1530,8 +1532,6 @@ Lisp function does not specify a special indentation."
 ;; ===================================================
 
 (use-package org
-  :hook (org-mode . (lambda ()
-                      (org-display-inline-images t t)))
   :init
   (setq org-emphasis-regexp-components '("-[:space:][:alpha:]('\"{"
                                          "-[:space:][:alpha:].,:!?;'\")}\\["
@@ -1561,6 +1561,7 @@ plist, etc."
         (with-current-buffer buf
           (apply #'buffer-face-set org-export-dispatch-buffer-face)))))
 
+  (org-display-inline-images t t)
   (advice-add 'org-export--dispatch-action :before
               #'org-export-dispatch-set-font)
 
@@ -1798,7 +1799,8 @@ plist, etc."
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
-(set-face-attribute 'default nil :height 175 :family "Monaco")
+;; (set-face-attribute 'default nil :height 175 :family "Monaco")
+(set-face-attribute 'default nil :height 180 :family "SF Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
