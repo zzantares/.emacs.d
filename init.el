@@ -565,7 +565,9 @@ Lisp function does not specify a special indentation."
          (dired-mode . auto-revert-mode)
          (dired-after-readin . zz-dired-sort-directories-first))
   :config
-  (setq dired-dwim-target t)
+  (setq dired-dwim-target t
+        dired-use-ls-dired t
+        insert-directory-program "gls")
   (put 'dired-find-alternate-file 'disabled nil)
   (general-evil-define-key 'normal dired-mode-map
     zz-motion-left nil
@@ -1037,7 +1039,7 @@ Lisp function does not specify a special indentation."
   (setq anzu-cons-mode-line-p t)
   (global-anzu-mode +1))
 
-(use-package font-lock+)
+(use-package font-lock-plus)
 
 (use-package all-the-icons
   :config
@@ -1049,12 +1051,6 @@ Lisp function does not specify a special indentation."
   :commands all-the-icons-dired-mode
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
-;; (use-package disable-mouse
-;;   :defer 5
-;;   :diminish disable-mouse-global-mode
-;;   :config
-;;   (global-disable-mouse-mode))
 
 (use-package evil-multiedit
   :demand t
@@ -1256,10 +1252,12 @@ Lisp function does not specify a special indentation."
 (use-package js2-mode
   :mode "\\.js\\'"
   :interpreter "node"
+  :after flycheck
+  :hook (flycheck-mode . (lambda ()
+                           (setq-default flycheck-disabled-checkers
+                                         (append flycheck-disabled-checkers
+                                                 '(javascript-jshint)))))
   :config
-  (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
   (setq-default js-indent-level 2
                 js-chain-indent t
                 js2-basic-offset 2
@@ -1663,7 +1661,6 @@ plist, etc."
   :demand t)
 
 (use-package ob-http
-  :straight (ob-http :type git :host github :repo "zweifisch/ob-http")
   :after org
   :demand t)
 
