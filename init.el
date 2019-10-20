@@ -1050,11 +1050,11 @@ Lisp function does not specify a special indentation."
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-(use-package disable-mouse
-  :defer 5
-  :diminish disable-mouse-global-mode
-  :config
-  (global-disable-mouse-mode))
+;; (use-package disable-mouse
+;;   :defer 5
+;;   :diminish disable-mouse-global-mode
+;;   :config
+;;   (global-disable-mouse-mode))
 
 (use-package evil-multiedit
   :demand t
@@ -1708,7 +1708,7 @@ plist, etc."
      (cons `(,org-reveal-note-key-char . "notes")) ;; the new way
      (setq org-structure-template-alist))
   ;; Black full screen on chrome https://cdn.jsdelivr.net/npm/reveal.js@3.3.0
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.6.0"
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@3.8.0"
         org-reveal-mathjax t))
 
 
