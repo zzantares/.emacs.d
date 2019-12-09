@@ -1403,11 +1403,36 @@ Lisp function does not specify a special indentation."
                                              "NamedFieldPuns"
                                              "FlexibleInstances"
                                              "FlexibleContexts")))
+  ;; https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026
+  (defun haskell-evil-open-above ()
+    (interactive)
+    (evil-digit-argument-or-evil-beginning-of-line)
+    (haskell-indentation-newline-and-indent)
+    (evil-previous-line)
+    (haskell-indentation-indent-line)
+    (evil-append-line nil))
+
+  (defun haskell-evil-open-below ()
+    (interactive)
+    (evil-append-line nil)
+    (haskell-indentation-newline-and-indent))
   :general
   (:keymaps 'haskell-mode-map :states 'normal :prefix "SPC"
    "rr" 'haskell-compile
    "ra" 'projectile-compile-project
-   "rt" 'projectile-test-project))
+   "rt" 'projectile-test-project)
+  (:keymaps 'haskell-mode-map :states 'normal
+   "o" 'haskell-evil-open-below
+   "O" 'haskell-evil-open-above))
+
+(use-package lsp-haskell
+  :after lsp
+  :demand t
+  :config
+  ;; Comment/uncomment this line to see interactions between lsp client/server.
+  (setq lsp-log-io t)
+  (setq lsp-haskell-process-path-hie "ghcide")
+  (setq lsp-haskell-process-args-hie '()))
 
 (use-package purescript-mode
   :hook (purescript-mode . turn-on-purescript-indentation)
@@ -1466,14 +1491,31 @@ Lisp function does not specify a special indentation."
   :init
   (add-hook 'go-mode-hook 'go-eldoc-setup))
 
+(use-package lsp-mode
+  :commands lsp
+  :hook ((scala-mode haskell-mode) . lsp-mode)
+  :config
+  (setq lsp-prefer-flymake nil)
+  (add-to-list 'lsp-language-id-configuration '(haskell-mode . "haskell")))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
+
 (use-package company
-  :defer 5
+  :demand t
   :diminish company-mode
+  :load-path "lib/"
   :config
   (global-company-mode)
-  (company-tng-configure-default)
+  ;; (company-tng-configure-default)
+  ;; this loads the github gist hack to make 'tng' expand snippet and avoid
+  ;; seeing type signatures in company-lsp when completing via TAB
+  (require 'company-simple-complete)
   (setq company-dabbrev-downcase 0
         company-idle-delay 0.2))
+
+(use-package company-lsp
+  :after company)
 
 (use-package company-statistics
   :hook (company-mode . company-statistics-mode))
