@@ -1246,7 +1246,19 @@ Lisp function does not specify a special indentation."
   (setq web-mode-css-indent-offset 2
         web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2
+        web-mode-script-padding 2
+        web-mode-block-padding 2
+        web-mode-style-padding 2
+        web-mode-enable-auto-pairing t
+        web-mode-enable-auto-closing t
+        web-mode-enable-current-element-highlight t
         web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'"))))
+
+(use-package web-beautify
+  :after web-mode
+  :demand t
+  :hook (web-mode . (lambda ()
+                      (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
 
 (use-package rbenv
   :commands global-rbenv-mode
@@ -1331,11 +1343,16 @@ Lisp function does not specify a special indentation."
   :after company flycheck
   :hook ((typescript-mode . (lambda ()
                               (tide-setup)
+                              (setq-local company-backends '(company-tide))
+                              (company-mode t)
                               (add-hook 'before-save-hook
                                         'tide-format-before-save nil 'local)))
          (web-mode . (lambda ()
                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
                          (tide-setup)
+                         (setq-local company-backends '(company-tide))
+                         (company-mode t)
+                         (flycheck-add-mode 'typescript-tslint 'web-mode)
                          (add-hook 'before-save-hook
                                    'tide-format-before-save nil 'local)))))
   :config
@@ -1522,15 +1539,15 @@ Lisp function does not specify a special indentation."
 
 (use-package company-web
   :commands company-mode
-  :init
-  (add-hook 'web-mode-hook (lambda ()
-                             (set (make-local-variable 'company-backends) '(company-web-html))
-                             (company-mode t))))
+  :hook (web-mode . (lambda ()
+                      (unless (string-equal "tsx" (file-name-extension buffer-file-name))
+                        (setq-local company-backends '(company-web-html))
+                        (company-mode t)))))
 
 (use-package company-tern
   :commands company-mode
   :hook (tern-mode . (lambda ()
-                       (set (make-local-variable 'company-backends) '(company-tern))
+                       (setq-local company-backends '(company-tern))
                        (company-mode t)))
   :config
   (setq company-tern-property-marker nil
