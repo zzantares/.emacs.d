@@ -48,6 +48,16 @@
 
 (setq straight-recipes-gnu-elpa-use-mirror t)
 
+;; Turn off bells and whistles at startup
+(setq inhibit-startup-message t
+      inhibit-startup-screen t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t
+      initial-major-mode 'fundamental-mode
+      initial-scratch-message nil
+      idle-update-delay 1)
+(fset #'display-startup-echo-area-message #'ignore)
+
 ;; Straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -1747,7 +1757,7 @@ plist, etc."
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-challenger-deep)
+  (load-theme 'doom-dracula)
   (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
@@ -1770,9 +1780,6 @@ plist, etc."
 
 ;;  Disable blink cursor
 (blink-cursor-mode -1)
-
-;; Don't show the startup screen
-(setq inhibit-startup-screen t)
 
 ;; Delete trailing spaces after saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -1799,8 +1806,8 @@ plist, etc."
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
-;; (set-face-attribute 'default nil :height 175 :family "Monaco")
-(set-face-attribute 'default nil :height 180 :family "SF Mono")
+(set-face-attribute 'default nil :height 170 :family "Monaco")
+;; (set-face-attribute 'default nil :height 180 :family "SF Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
