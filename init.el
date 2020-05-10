@@ -115,6 +115,11 @@
   (interactive)
   (zz-scroll-half-page t))
 
+(defun zz-reverse-selection (beg end)
+  "Reverses all the characters included in the region from BEG to END."
+  (interactive "r")
+  (insert (nreverse (delete-and-extract-region beg end))))
+
 (defun zz-toggle-projectile-dired ()
   "Toggle projectile-dired buffer."
   (interactive)
@@ -128,9 +133,7 @@
   "When in a project use projectile to find a file otherwise use counsel."
   (interactive)
   (if (projectile-project-p)
-      (if (projectile-file-exists-p ".git")
-          (counsel-git)
-        (counsel-projectile-find-file))
+      (counsel-projectile-find-file)
     (counsel-find-file)))
 
 (defun zz-toggle-dired ()
@@ -496,6 +499,9 @@ Lisp function does not specify a special indentation."
     :type line
     (zz-scroll-half-page nil))
 
+  (eval-after-load 'evil-ex
+    '(evil-ex-define-cmd "rev[erse]" 'zz-reverse-selection))
+
   (general-define-key :states 'motion
     zz-motion-up 'evil-previous-line
     zz-motion-down 'evil-next-line
@@ -545,9 +551,11 @@ Lisp function does not specify a special indentation."
     "M-c" 'evil-yank
     "M-v" 'evil-visual-paste)
 
-  (general-define-key :keymaps '(minibuffer-local-map minibuffer-local-ns-map
-                                                      minibuffer-local-completion-map minibuffer-local-must-match-map
-                                                      minibuffer-local-isearch-map)
+  (general-define-key :keymaps '(minibuffer-local-map
+                                 minibuffer-local-ns-map
+                                 minibuffer-local-completion-map
+                                 minibuffer-local-must-match-map
+                                 minibuffer-local-isearch-map)
     "<escape>" 'zz-minibuffer-keyboard-quit))
 
 (use-package minibuffer
@@ -648,7 +656,8 @@ Lisp function does not specify a special indentation."
   :commands (projectile-project-p)
   :diminish projectile-mode
   :config
-  (setq projectile-globally-ignored-files '(".DS_Store")
+  (setq projectile-globally-ignored-files '(".DS_Store" ".class")
+        projectile-indexing-method 'hybrid
         projectile-completion-system 'ivy)
   (projectile-mode)
   :general
@@ -1111,8 +1120,8 @@ Lisp function does not specify a special indentation."
                         (set-fill-column 80))))
   :general
   (:states 'normal :keymaps 'messages-buffer-mode-map
-           "q" 'evil-buffer
-           "<escape>" 'evil-buffer))
+   "q" 'evil-buffer
+   "<escape>" 'evil-buffer))
 
 (use-package emmet-mode
   :commands emmet-mode
@@ -1858,10 +1867,10 @@ plist, etc."
   (setq mac-command-modifier 'meta)
   (setq mac-pass-command-to-system nil))
 
-;; Identation and line spaceing settings
+;; Identation and line spacing settings
 (setq tab-stop-list (number-sequence 4 200 4))
-(setq-default line-spacing 5
-              ;; line-spacing 15
+(setq-default ;; line-spacing 5
+              line-spacing 15
               indent-tabs-mode nil
               tab-width 4)
 
@@ -1875,12 +1884,12 @@ plist, etc."
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
 ;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
-(set-face-attribute 'default nil :height 170 :family "Monaco")
+;; (set-face-attribute 'default nil :height 170 :family "Monaco")
 ;; (set-face-attribute 'default nil :height 180 :family "SF Mono")
-;; (set-face-attribute 'default nil :height 180 :family "Menlo")
-;; (set-face-attribute 'default nil :height 160 :family "Roboto Mono")
-;; (set-face-attribute 'default nil :height 170 :family "Fantasque Sans Mono")
-;; (set-face-attribute 'default nil :height 160 :family "Fira Mono")
+(set-face-attribute 'default nil :height 180 :family "Menlo")
+;; (set-face-attribute 'default nil :height 175 :family "Roboto Mono")
+;; (set-face-attribute 'default nil :height 180 :family "Fantasque Sans Mono")
+;; (set-face-attribute 'default nil :height 180 :family "Fira Mono")
 
 ;; Only applies to Yamamoto Mitsuharu's patch
 (when (boundp 'mac-carbon-version-string)
