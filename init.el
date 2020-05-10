@@ -435,7 +435,7 @@ Lisp function does not specify a special indentation."
         kept-old-versions 2
         version-control t)
   (setq backup-directory-alist
-        `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
+        `(("." . ,(no-littering-expand-var-file-name "backup/"))))
   (setq auto-save-list-file-prefix
         (no-littering-expand-var-file-name "auto-save/"))
   (setq auto-save-file-name-transforms
@@ -701,9 +701,9 @@ Lisp function does not specify a special indentation."
 (use-package flyspell-correct-ivy
   :general
   (:keymaps 'normal :prefix "SPC"
-            "fs" 'flyspell-correct-word-generic
-            "fp" 'flyspell-correct-previous-word-generic
-            "fn" 'flyspell-correct-next-word-generic))
+            "fs" 'flyspell-correct-at-point
+            "fp" 'flyspell-correct-previous
+            "fn" 'flyspell-correct-next))
 
 (use-package magit
   :commands magit-read-other-branch-or-commit
@@ -716,18 +716,23 @@ Lisp function does not specify a special indentation."
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
         magit-save-repository-buffers nil
         magit-repository-directories '(("\~/workspace" . 2)))
+  (eval-after-load 'evil-ex
+    '(evil-ex-define-cmd "resolve" 'magit-ediff-resolve))
   :general
+  (:states 'normal
+   "[c" 'smerge-prev
+   "]c" 'smerge-next)
   (:states 'normal
            :prefix "SPC"
            "gs" 'magit-status
            "gS" 'zz/magit-status-with-prefix-arg
-           "go" 'zz-magit-checkout
+           "gco" 'zz-magit-checkout
            "gl" 'magit-log-current
            "gb" 'magit-blame
            "gm" 'magit-merge
+           "gca" 'magit-commit-amend
            "gpl" 'magit-pull-branch
-           "gps" 'magit-push-other
-           "mgr" 'magit-ediff-resolve))
+           "gps" 'magit-push-other))
 
 (use-package evil-magit
   :after magit
@@ -1084,10 +1089,10 @@ Lisp function does not specify a special indentation."
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
   (define-key evil-multiedit-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
   (define-key evil-motion-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
-  (define-key evil-multiedit-state-map (kbd "]c") 'evil-multiedit-next)
-  (define-key evil-multiedit-state-map (kbd "[c") 'evil-multiedit-prev)
-  (define-key evil-multiedit-insert-state-map (kbd "]c") 'evil-multiedit-next)
-  (define-key evil-multiedit-insert-state-map (kbd "[c") 'evil-multiedit-prev)
+  (define-key evil-multiedit-state-map (kbd "M-<right>") 'evil-multiedit-next)
+  (define-key evil-multiedit-state-map (kbd "M-<left>") 'evil-multiedit-prev)
+  (define-key evil-multiedit-insert-state-map (kbd "M-<right>") 'evil-multiedit-next)
+  (define-key evil-multiedit-insert-state-map (kbd "M-<left>") 'evil-multiedit-prev)
   :general
   (:keymaps 'normal
    "M-d" 'evil-multiedit-match-and-next
