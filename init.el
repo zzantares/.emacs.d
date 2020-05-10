@@ -560,6 +560,9 @@ Lisp function does not specify a special indentation."
 
 (use-package minibuffer
   :straight nil
+  :hook (minibuffer-setup . (lambda ()
+                              (when (eq this-command 'eval-expression)
+                                (lispy-mode 1))))
   :init
   ;; Don't garbage collect too often
   (add-hook 'minibuffer-setup-hook #'(lambda () (interactive) (setq gc-cons-threshold most-positive-fixnum)))
@@ -772,7 +775,10 @@ Lisp function does not specify a special indentation."
   (evil-embrace-enable-evil-surround-integration))
 
 (use-package lispy
-  :hook ((emacs-lisp-mode lisp-mode clojure-mode) . lispy-mode))
+  :hook ((emacs-lisp-mode lisp-mode clojure-mode) . lispy-mode)
+  :general
+  (:keymaps 'lispy-mode-map-lispy :states 'insert
+   "\"" 'lispy-doublequote))
 
 (use-package lispyville
   :hook (lispy-mode . lispyville-mode)
@@ -962,7 +968,7 @@ Lisp function does not specify a special indentation."
   (spaceline-toggle-minor-modes-off))
 
 (use-package rainbow-delimiters
-  :hook (clojure-mode . rainbow-delimiters-mode))
+  :hook ((emacs-lisp-mode lisp-mode clojure-mode) . rainbow-delimiters-mode))
 
 (use-package solaire-mode
   :hook
@@ -1493,9 +1499,52 @@ Lisp function does not specify a special indentation."
    'self-insert-command
    minibuffer-local-completion-map))
 
-(use-package clojure-mode)
+(use-package kotlin-mode)
 
-(use-package cider)
+(use-package groovy-mode
+  :mode "\\.gradle\\'")
+
+(use-package clojure-mode
+  :commands cljfmt
+  :hook (clojure-mode . (lambda ()
+                          (add-hook 'before-save-hook 'cljfmt nil 'local)))
+  :config
+  (defun cljfmt ()
+    "For this to work we have to install 'npm install -g node-cljfmt'."
+    (when (or (eq major-mode 'clojure-mode)
+              (eq major-mode 'clojurescript-mode))
+      (shell-command-to-string (format "cljfmt %s" buffer-file-name))
+      (revert-buffer :ignore-auto :noconfirm))))
+
+(use-package flycheck-clj-kondo
+  :after clojure-mode
+  :demand t
+  :config
+  (require 'flycheck-clj-kondo))
+
+(use-package cider
+  :after clojure-mode
+  :demand t
+  :config
+  (eval-after-load 'evil-ex
+    '(evil-ex-define-cmd "cid[er]"
+                         (lambda ()
+                           (if (string-match "cljs\\'" (buffer-name))
+                               (cider-jack-in-cljs)
+                             (cider-jack-in)))))
+  (add-to-list 'evil-emacs-state-modes 'cider-stacktrace-mode)
+  :general
+  (:keymaps 'cider-repl-mode-map :states 'insert
+   "C-p" 'cider-repl-previous-input
+   "C-n" 'cider-repl-next-input)
+  (:keymaps 'cider-repl-mode-map :states 'normal
+   "C-a k" 'cider-quit
+   (concat "C-" zz-motion-up) 'cider-repl-previous-prompt
+   (concat "C-" zz-motion-down) 'cider-repl-next-prompt
+   "i" '(lambda ()
+          (interactive)
+          (goto-char (point-max))
+          (evil-append-line 1))))
 
 (use-package elixir-mode
   :hook (elixir-mode . (lambda ()
