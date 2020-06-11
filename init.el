@@ -1259,12 +1259,12 @@ Lisp function does not specify a special indentation."
    "ra" 'phpunit-current-project))
 
 (use-package web-mode
+  :after flycheck
   :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.erb\\'" "\\.djhtml\\'"
-         "\\.html?\\'" "\\.css\\'" "\\.html\\.eex\\'" "\\.tsx\\'")
+         "\\.html?\\'" "\\.html\\.eex\\'" "\\.tsx\\'")
   :config
   (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (setq web-mode-css-indent-offset 2
-        web-mode-markup-indent-offset 2
+  (setq web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2
         web-mode-script-padding 2
         web-mode-block-padding 2
@@ -1275,10 +1275,11 @@ Lisp function does not specify a special indentation."
         web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'"))))
 
 (use-package web-beautify
-  :after web-mode
-  :demand t
-  :hook (web-mode . (lambda ()
-                      (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+  :after (:any web-mode css-mode)
+  :hook ((web-mode . (lambda ()
+                       (add-hook 'before-save-hook 'web-beautify-html-buffer t t)))
+         (css-mode . (lambda ()
+                      (add-hook 'before-save-hook 'web-beautify-css-buffer t t)))))
 
 (use-package rbenv
   :commands global-rbenv-mode
@@ -1305,23 +1306,6 @@ Lisp function does not specify a special indentation."
                 js2-basic-offset 2
                 js2-strict-missing-semi-warning nil)
   (js2-imenu-extras-mode))
-
-(use-package tern
-  :if (locate-file "tern" exec-path)
-  :hook ((js2-mode . tern-mode)
-         (rjsx-mode . tern-mode))
-  :config
-  (defun zz-find-tern ()
-    "Finds the tern.el file in the correct NVM node_modules folder."
-    (let* ((node-version (comment-string-strip
-                          (shell-command-to-string "node --version") t t))
-           (node-modules (concat
-                          "~/.nvm/versions/node/" node-version "/lib/node_modules")))
-      (locate-file "tern/emacs/tern.el" (list node-modules))))
-  (when-let
-      ((tern-location (zz-find-tern)))
-    (add-to-list 'load-path tern-location)
-    (autoload 'tern-mode "tern.el" nil t)))
 
 (use-package rjsx-mode
   :mode (("\\.jsx$" . rjsx-mode)
@@ -1364,17 +1348,18 @@ Lisp function does not specify a special indentation."
   :hook ((typescript-mode . (lambda ()
                               (tide-setup)
                               (setq-local company-backends '(company-tide))
-                              (company-mode t)
-                              (add-hook 'before-save-hook
-                                        'tide-format-before-save nil 'local)))
+                              (company-mode t)))
+         (js2-mode . (lambda ()
+                       (tide-setup)
+                       (setq-local company-backends '(company-tide))
+                       (company-mode t)
+                       (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)))
          (web-mode . (lambda ()
                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
                          (tide-setup)
                          (setq-local company-backends '(company-tide))
                          (company-mode t)
-                         (flycheck-add-mode 'typescript-tslint 'web-mode)
-                         (add-hook 'before-save-hook
-                                   'tide-format-before-save nil 'local)))))
+                         (flycheck-add-mode 'typescript-tslint 'web-mode)))))
   :config
   (eldoc-mode +1)
   (tide-hl-identifier-mode +1))
@@ -1616,15 +1601,6 @@ Lisp function does not specify a special indentation."
                       (unless (string-equal "tsx" (file-name-extension buffer-file-name))
                         (setq-local company-backends '(company-web-html))
                         (company-mode t)))))
-
-(use-package company-tern
-  :commands company-mode
-  :hook (tern-mode . (lambda ()
-                       (setq-local company-backends '(company-tern))
-                       (company-mode t)))
-  :config
-  (setq company-tern-property-marker nil
-        company-tooltip-align-annotations t))
 
 (use-package company-go
   :commands company-mode
