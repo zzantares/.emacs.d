@@ -1512,8 +1512,10 @@ Lisp function does not specify a special indentation."
   (setq refmt-command 'npm))
 
 (use-package scala-mode
-  :interpreter ("scala" . scala-mode)
-  :hook (scala-mode . (lambda () (evil-smartparens-mode -1))))
+  :mode "\\.s\\(cala\\|bt\\)$"
+  :hook (scala-mode . (lambda ()
+                        (evil-smartparens-mode -1)
+                        (add-hook 'before-save-hook 'lsp-format-buffer nil 'local))))
 
 (use-package sbt-mode
   :commands sbt-start sbt-command
@@ -1523,24 +1525,15 @@ Lisp function does not specify a special indentation."
   (substitute-key-definition
    'minibuffer-complete-word
    'self-insert-command
-   minibuffer-local-completion-map))
+   minibuffer-local-completion-map)
+  (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 (use-package kotlin-mode)
 
 (use-package groovy-mode
   :mode "\\.gradle\\'")
 
-(use-package clojure-mode
-  :commands cljfmt
-  :hook (clojure-mode . (lambda ()
-                          (add-hook 'before-save-hook 'cljfmt nil 'local)))
-  :config
-  (defun cljfmt ()
-    "For this to work we have to install 'npm install -g node-cljfmt'."
-    (when (or (eq major-mode 'clojure-mode)
-              (eq major-mode 'clojurescript-mode))
-      (shell-command-to-string (format "cljfmt %s" buffer-file-name))
-      (revert-buffer :ignore-auto :noconfirm))))
+(use-package clojure-mode)
 
 (use-package flycheck-clj-kondo
   :after clojure-mode
@@ -1608,7 +1601,7 @@ Lisp function does not specify a special indentation."
 
 (use-package lsp-mode
   :commands lsp
-  :hook ((scala-mode haskell-mode) . lsp-mode)
+  :hook ((scala-mode haskell-mode) . lsp)
   :config
   (setq lsp-prefer-flymake nil)
   (add-to-list 'lsp-language-id-configuration '(haskell-mode . "haskell")))
