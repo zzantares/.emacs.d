@@ -1120,10 +1120,35 @@ Lisp function does not specify a special indentation."
   ;; Use M-x list-colors-display to see names to color references
   (set-face-attribute 'whitespace-tab nil :background nil :foreground "gridColor"))
 
+(use-package info
+  :straight nil
+  :init
+  (add-hook 'Info-mode-hook
+            '(lambda ()
+               (evil-define-key 'motion Info-mode-map (kbd "w") 'evil-forward-word-begin)
+               (evil-define-key 'motion Info-mode-map (kbd "e") 'evil-forward-word-end)
+               (evil-define-key 'motion Info-mode-map (kbd "b") 'evil-backward-word-begin)
+               (evil-define-key 'motion Info-mode-map (kbd "ge") 'evil-backward-word-end)
+               (evil-define-key 'motion Info-mode-map (kbd "W") 'evil-forward-WORD-begin)
+               (evil-define-key 'motion Info-mode-map (kbd "E") 'evil-forward-WORD-end)
+               (evil-define-key 'motion Info-mode-map (kbd "B") 'evil-backward-WORD-begin)
+               (evil-define-key 'motion Info-mode-map (kbd "gE") 'evil-backward-WORD-end)
+               (evil-define-key 'motion Info-mode-map (kbd "gb") 'evil-buffer)
+               (evil-define-key 'motion Info-mode-map (kbd zz-motion-left) 'evil-backward-char)
+               (evil-define-key 'motion Info-mode-map (kbd zz-motion-right) 'evil-forward-char)
+               (evil-define-key 'motion Info-mode-map (kbd zz-motion-down) 'evil-next-visual-line)
+               (evil-define-key 'motion Info-mode-map (kbd zz-motion-up) 'evil-previous-visual-line))))
+
 (use-package simple
   :straight nil
   :diminish auto-fill-function
-  :hook ((text-mode . visual-line-mode)
+  :hook ((text-mode . (lambda ()
+                        (visual-line-mode)
+                        (general-define-key :keymaps '(normal visual)
+                          zz-motion-left 'evil-backward-char
+                          zz-motion-right 'evil-forward-char
+                          zz-motion-down 'evil-next-visual-line
+                          zz-motion-up 'evil-previous-visual-line)))
          (java-mode . (lambda () (set-fill-column 110)))
          (python-mode . (lambda () (set-fill-column 79)))
          (prog-mode . (lambda ()
@@ -1241,6 +1266,8 @@ Lisp function does not specify a special indentation."
   :general
   (:keymaps 'normal :prefix "SPC"
    "cw" 'centered-window-mode))
+
+(use-package page-break-lines)
 
 ;; ===================================================
 ;; LANGUAGE SPECIFIC MODES AND PACKAGES
@@ -1830,13 +1857,13 @@ plist, etc."
 ;; ===================================================
 ;; THEMES
 ;; ===================================================
+(use-package poet-theme :no-require t)
 (use-package seti-theme :no-require t)
 (use-package eziam-theme :no-require t)
 (use-package planet-theme :no-require t)
 (use-package flatui-theme :no-require t)
 (use-package minimal-theme :no-require t)
 (use-package molokai-theme :no-require t)
-(use-package kaolin-themes :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
 (use-package base16-theme :no-require t)
@@ -1846,6 +1873,7 @@ plist, etc."
 (use-package sublime-themes :no-require t)
 (use-package intellij-theme :no-require t)
 (use-package farmhouse-theme :no-require t)
+(use-package brutalist-theme :no-require t)
 (use-package solarized-theme :no-require t)
 (use-package white-sand-theme :no-require t)
 (use-package soft-stone-theme :no-require t)
@@ -1854,18 +1882,23 @@ plist, etc."
 (use-package anti-zenburn-theme :no-require t)
 (use-package dakrone-light-theme :no-require t)
 (use-package apropospriate-theme :no-require t)
+(use-package modus-operandi-theme :no-require t)
 (use-package twilight-bright-theme :no-require t)
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
+(use-package modus-vivendi-theme :no-require t)
 (use-package chocolate-theme
   :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
   :no-require t)
-(use-package doom-themes
+(use-package kaolin-themes
   :demand t
+  :config
+  (load-theme 'kaolin-temple))
+(use-package doom-themes
+  :no-require t
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-dracula)
   (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
@@ -1916,7 +1949,7 @@ plist, etc."
 ;; (set-face-attribute 'default nil :height 150 :family "Hack")
 ;; (set-face-attribute 'default nil :height 170 :family "Monaco")
 ;; (set-face-attribute 'default nil :height 180 :family "SF Mono")
-(set-face-attribute 'default nil :height 180 :family "Menlo")
+(set-face-attribute 'default nil :height 170 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 175 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Fira Mono")
