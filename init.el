@@ -1483,6 +1483,9 @@ Lisp function does not specify a special indentation."
   (setq lsp-haskell-process-path-hie "ghcide")
   (setq lsp-haskell-process-args-hie '()))
 
+(use-package dhall-mode
+  :mode "\\.dhall\\'")
+
 (use-package purescript-mode
   :hook (purescript-mode . turn-on-purescript-indentation)
   :diminish purescript-indentation-mode)
@@ -1501,6 +1504,12 @@ Lisp function does not specify a special indentation."
                          'elm-mode-format-buffer
                          nil
                          'local))))
+
+(use-package reason-mode
+  :hook (reason-mode . (lambda ()
+                         (add-hook 'before-save-hook #'refmt-before-save nil 'local)))
+  :config
+  (setq refmt-command 'npm))
 
 (use-package scala-mode
   :interpreter ("scala" . scala-mode)
@@ -1577,6 +1586,10 @@ Lisp function does not specify a special indentation."
 
 (use-package nix-mode
   :mode ("\\.nix$" . nix-mode))
+
+(use-package rust-mode
+  :config
+  (setq rust-format-on-save t))
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
