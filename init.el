@@ -1571,10 +1571,6 @@ Lisp function does not specify a special indentation."
 
 (use-package csharp-mode)
 
-(use-package fsharp-mode
-  :config
-  (setq-default fsharp-indent-offset 2))
-
 (use-package solidity-mode)
 
 (use-package nix-mode
@@ -1806,14 +1802,6 @@ plist, etc."
 (use-package org-evil
   ;; TODO: Alternative package https://github.com/Somelauw/evil-org-mode
   )
-
-(use-package ob-fsharp
-  :after org
-  :demand t)
-
-(use-package ob-http
-  :after org
-  :demand t)
 
 (use-package ox-gfm
   :after ox
