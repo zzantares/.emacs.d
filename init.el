@@ -481,6 +481,7 @@ Lisp function does not specify a special indentation."
   :custom
   (evil-want-C-u-scroll t)
   (evil-want-Y-yank-to-eol t)
+  (evil-undo-system 'undo-fu)
   ;; (evil-search-module 'evil-search)
 
   :config
@@ -817,7 +818,7 @@ Lisp function does not specify a special indentation."
 
 (use-package treemacs
   :config
-  (setq treemacs-width 30
+  (setq treemacs-width 35
         treemacs-silent-refresh t
         treemacs-silent-filewatch t
         treemacs-file-event-delay 1000
@@ -843,6 +844,8 @@ Lisp function does not specify a special indentation."
   (:states 'normal :keymaps 'treemacs-mode-map
    "o" 'treemacs-RET-action
    "l" 'treemacs-TAB-action
+   zz-motion-down 'treemacs-next-line
+   zz-motion-up 'treemacs-previous-line
    (concat "C-" zz-motion-down) 'treemacs-next-project
    (concat "C-" zz-motion-up) 'treemacs-previous-project
    (concat "C-" zz-motion-left) 'treemacs-switch-workspace
@@ -918,7 +921,7 @@ Lisp function does not specify a special indentation."
   :defer 3
   :diminish smartparens-mode
   :commands smartparens-mode
-  :hook (prog-mode . smartparens-mode)
+  :hook ((prog-mode toml-mode) . smartparens-mode)
   :config
   (setq sp-autoskip-closing-pair (quote always))
   (require 'smartparens-config)
@@ -1400,6 +1403,10 @@ Lisp function does not specify a special indentation."
 (use-package feature-mode
   :mode "\\.feature\\'")
 
+(use-package sql-indent)
+
+(use-package toml-mode)
+
 (use-package yaml-mode
   :mode "\\.yml\\'")
 
@@ -1511,11 +1518,15 @@ Lisp function does not specify a special indentation."
   :config
   (setq refmt-command 'npm))
 
+(use-package fsharp-mode)
+
 (use-package scala-mode
   :mode "\\.s\\(cala\\|bt\\)$"
   :hook (scala-mode . (lambda ()
                         (evil-smartparens-mode -1)
                         (add-hook 'before-save-hook 'lsp-format-buffer nil 'local))))
+
+(use-package lsp-metals)
 
 (use-package sbt-mode
   :commands sbt-start sbt-command
@@ -1661,6 +1672,10 @@ Lisp function does not specify a special indentation."
         flycheck-python-flake8-executable (executable-find "flake8"))
   (delete `elpy-module-highlight-indentation elpy-modules))
 
+(use-package python-mode
+  :straight nil
+  :hook (python-mode . (lambda () (evil-smartparens-mode -1))))
+
 ;; ===================================================
 ;; VANILLA PACKAGES
 ;; ===================================================
@@ -1738,6 +1753,8 @@ plist, etc."
                                       "|" "DONE" "DELEGATED" "CANCELED"))
         org-agenda-files (list "~/Documents/org/free.org"
                                "~/Documents/org/paid.org"
+                               "~/Documents/org/working.org"
+                               "~/Documents/org/projects.org"
                                "~/Documents/org/todo.org")
         org-babel-clojure-backend 'cider)
   :general
@@ -1803,6 +1820,9 @@ plist, etc."
   ;; TODO: Alternative package https://github.com/Somelauw/evil-org-mode
   )
 
+(use-package ob-rust
+  :after org)
+
 (use-package ox-gfm
   :after ox
   :demand t)
@@ -1860,6 +1880,7 @@ plist, etc."
 (use-package molokai-theme :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
+(use-package kaolin-themes :no-require t)
 (use-package base16-theme :no-require t)
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
@@ -1884,15 +1905,12 @@ plist, etc."
 (use-package chocolate-theme
   :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
   :no-require t)
-(use-package kaolin-themes
-  :demand t
-  :config
-  (load-theme 'kaolin-temple))
 (use-package doom-themes
-  :no-require t
+  :demand t
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
+  (load-theme 'doom-old-hope)
   (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
@@ -1935,15 +1953,15 @@ plist, etc."
 (set-face-attribute 'vertical-border nil :foreground "black")
 
 ;; Font settings
-;; (set-face-attribute 'default nil :height 180 :family "Inconsolata")
-;; (set-face-attribute 'default nil :height 200 :family "Consolas")
+;; (set-face-attribute 'default nil :height 200 :family "Inconsolata")
+(set-face-attribute 'default nil :height 190 :family "Consolas")
 ;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
 ;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
-;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
-;; (set-face-attribute 'default nil :height 150 :family "Hack")
+;; (set-face-attribute 'default nil :height 190 :family "Fira Code")
+;; (set-face-attribute 'default nil :height 180 :family "Hack")
 ;; (set-face-attribute 'default nil :height 170 :family "Monaco")
 ;; (set-face-attribute 'default nil :height 180 :family "SF Mono")
-(set-face-attribute 'default nil :height 170 :family "Menlo")
+;; (set-face-attribute 'default nil :height 170 :family "Menlo")
 ;; (set-face-attribute 'default nil :height 175 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Fantasque Sans Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Fira Mono")
