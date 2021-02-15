@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: moddoc
+# key: /!
+# --
+//! # $1
+//!
+//! $0

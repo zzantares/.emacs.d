@@ -460,17 +460,21 @@ Lisp function does not specify a special indentation."
   (general-define-key :states 'normal :prefix "SPC"
     "q" 'zz-quit-help-like-windows
     "u" 'universal-argument
-    "hk" 'describe-key
-    "hm" 'describe-mode
-    "hb" 'describe-bindings
-    "hp" 'describe-package
-    "hv" 'describe-variable
-    "hf" 'describe-function
-    "ha" 'apropos-command
-    "hd" 'apropos-documentation
-    "hi" 'info)
+    "dk" 'describe-key
+    "dm" 'describe-mode
+    "db" 'describe-bindings
+    "dp" 'describe-package
+    "dv" 'describe-variable
+    "df" 'describe-function
+    "da" 'apropos-command
+    "dd" 'apropos-documentation
+    "di" 'info)
   (general-define-key :keymaps '(normal visual) :prefix "SPC"
-    "lt" '(lambda () (interactive) (counsel-load-theme) (zz-fix-whitespace))
+    "lt" '(lambda ()
+            (interactive)
+            (counsel-load-theme)
+            (zz-fix-whitespace)
+            (zz-fix-spaceline))
     "ln" 'linum-mode
     "ta" 'align-regexp))
 
@@ -723,17 +727,16 @@ Lisp function does not specify a special indentation."
   (:states 'normal
    "[c" 'smerge-prev
    "]c" 'smerge-next)
-  (:states 'normal
-           :prefix "SPC"
-           "gs" 'magit-status
-           "gS" 'zz/magit-status-with-prefix-arg
-           "gco" 'zz-magit-checkout
-           "gl" 'magit-log-current
-           "gb" 'magit-blame
-           "gm" 'magit-merge
-           "gca" 'magit-commit-amend
-           "gpl" 'magit-pull-branch
-           "gps" 'magit-push-other))
+  (:states 'normal :prefix "SPC"
+   "gs" 'magit-status
+   "gS" 'zz/magit-status-with-prefix-arg
+   "gco" 'zz-magit-checkout
+   "gl" 'magit-log-current
+   "gb" 'magit-blame
+   "gm" 'magit-merge
+   "gca" 'magit-commit-amend
+   "gpl" 'magit-pull-branch
+   "gps" 'magit-push-other))
 
 (use-package evil-magit
   :after magit
@@ -870,10 +873,8 @@ Lisp function does not specify a special indentation."
    "yf" 'treemacs-copy-file
    "b" 'treemacs-bookmark))
 
-(use-package treemacs-evil
-  :after evil treemacs)
-
 (use-package treemacs-projectile
+  :demand t
   :after treemacs projectile)
 
 (use-package treemacs-magit
@@ -969,11 +970,15 @@ Lisp function does not specify a special indentation."
   :init
   (add-hook 'after-init-hook 'spaceline-spacemacs-theme)
   :config
-  (require 'spaceline-config)
-  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-  (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
-  (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
-  (spaceline-toggle-minor-modes-off))
+  (defun zz-fix-spaceline ()
+    (interactive)
+    "Fix mode line appearance (useful after switching themes)."
+    (require 'spaceline-config)
+    (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+    (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
+    (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
+    (spaceline-toggle-minor-modes-off))
+  (zz-fix-spaceline))
 
 (use-package rainbow-delimiters
   :hook ((emacs-lisp-mode lisp-mode clojure-mode) . rainbow-delimiters-mode))
@@ -1052,8 +1057,8 @@ Lisp function does not specify a special indentation."
   (set-face-foreground 'git-gutter:added "#859900")
   (set-face-foreground 'git-gutter:deleted "#dc322f")
   (let* ((gutter-font (if (eq system-type 'darwin)
-                           "Menlo"
-                         "Consolas")))
+                          "Menlo"
+                        "Consolas")))
     (set-face-font 'git-gutter:modified gutter-font)
     (set-face-font 'git-gutter:added gutter-font)
     (set-face-font 'git-gutter:deleted gutter-font))
@@ -1154,6 +1159,7 @@ Lisp function does not specify a special indentation."
                           zz-motion-up 'evil-previous-visual-line)))
          (java-mode . (lambda () (set-fill-column 110)))
          (python-mode . (lambda () (set-fill-column 79)))
+         (rustic-mode . (lambda () (set-fill-column 100)))
          (prog-mode . (lambda ()
                         (turn-on-auto-fill)
                         (set-fill-column 80))))
@@ -1226,9 +1232,8 @@ Lisp function does not specify a special indentation."
   (:keymaps 'normal :prefix "SPC"
             "zsh" 'zz-zshell-current-dir))
 
-(use-package undo-tree
-  :straight nil
-  :diminish undo-tree-mode)
+(use-package undo-fu
+  :demand t)
 
 (use-package htmlize)
 (use-package esup)
@@ -1289,11 +1294,9 @@ Lisp function does not specify a special indentation."
    "ra" 'phpunit-current-project))
 
 (use-package web-mode
-  :after flycheck
-  :mode ("\\.blade\\.php\\'" "\\.tpl\\.php\\'" "\\.erb\\'" "\\.djhtml\\'"
-         "\\.html?\\'" "\\.html\\.eex\\'" "\\.tsx\\'")
+  :mode ("\\.tsx\\'" "\\.blade\\.php\\'" "\\.erb\\'"
+         "\\.djhtml\\'" "\\.html?\\'" "\\.html\\.eex\\'")
   :config
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
   (setq web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2
         web-mode-script-padding 2
@@ -1303,13 +1306,6 @@ Lisp function does not specify a special indentation."
         web-mode-enable-auto-closing t
         web-mode-enable-current-element-highlight t
         web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'"))))
-
-(use-package web-beautify
-  :after (:any web-mode css-mode)
-  :hook ((web-mode . (lambda ()
-                       (add-hook 'before-save-hook 'web-beautify-html-buffer t t)))
-         (css-mode . (lambda ()
-                      (add-hook 'before-save-hook 'web-beautify-css-buffer t t)))))
 
 (use-package rbenv
   :commands global-rbenv-mode
@@ -1447,48 +1443,11 @@ Lisp function does not specify a special indentation."
   :hook (emacs-lisp-mode . (lambda ()
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
 
-(use-package haskell-mode
-  :hook (haskell-mode . (lambda () (evil-smartparens-mode -1)))
-  :config
-  (let ((stack-command "stack build --pedantic --fast"))
-    (setq haskell-stylish-on-save t
-          haskell-compile-cabal-build-command (concat "cd %s && " stack-command)
-          projectile-project-compilation-cmd stack-command
-          projectile-project-test-cmd (concat stack-command " --test")
-          flycheck-ghc-language-extensions '("OverloadedStrings"
-                                             "NamedFieldPuns"
-                                             "FlexibleInstances"
-                                             "FlexibleContexts")))
-  ;; https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026
-  (defun haskell-evil-open-above ()
-    (interactive)
-    (evil-digit-argument-or-evil-beginning-of-line)
-    (haskell-indentation-newline-and-indent)
-    (evil-previous-line)
-    (haskell-indentation-indent-line)
-    (evil-append-line nil))
-
-  (defun haskell-evil-open-below ()
-    (interactive)
-    (evil-append-line nil)
-    (haskell-indentation-newline-and-indent))
-  :general
-  (:keymaps 'haskell-mode-map :states 'normal :prefix "SPC"
-   "rr" 'haskell-compile
-   "ra" 'projectile-compile-project
-   "rt" 'projectile-test-project)
-  (:keymaps 'haskell-mode-map :states 'normal
-   "o" 'haskell-evil-open-below
-   "O" 'haskell-evil-open-above))
-
 (use-package lsp-haskell
   :after lsp
   :demand t
-  :config
-  ;; Comment/uncomment this line to see interactions between lsp client/server.
-  (setq lsp-log-io t)
-  (setq lsp-haskell-process-path-hie "ghcide")
-  (setq lsp-haskell-process-args-hie '()))
+  :custom
+  (lsp-haskell-formatting-provider "brittany"))
 
 (use-package dhall-mode
   :mode "\\.dhall\\'")
@@ -1587,15 +1546,15 @@ Lisp function does not specify a special indentation."
 (use-package nix-mode
   :mode ("\\.nix$" . nix-mode))
 
-(use-package rust-mode
+(use-package rustic
+  :mode ("\\.rs\\'" . rustic-mode)
   :config
-  (setq rust-format-on-save t))
+  (setq rustic-lsp-server 'rust-analyzer
+        rustic-format-on-save t))
 
 (use-package go-mode
   :hook (go-mode . (lambda ()
                      (add-hook 'before-save-hook 'gofmt-before-save nil 'local)))
-  :config
-  (setq gofmt-command "goimports")
   :general
   (:keymaps 'go-mode-map :states 'normal
    "M-RET" 'godef-jump))
@@ -1608,18 +1567,31 @@ Lisp function does not specify a special indentation."
 
 (use-package lsp-mode
   :commands lsp
-  :hook ((scala-mode haskell-mode) . lsp)
-  :config
-  (setq lsp-prefer-flymake nil)
-  (add-to-list 'lsp-language-id-configuration '(haskell-mode . "haskell")))
+  :hook ((scala-mode haskell-mode haskell-literate-mode) . lsp)
+  :custom
+  (lsp-prefer-flymake nil)
+  (lsp-signature-doc-lines 2)
+  (lsp-signature-auto-activate nil)
+  :general
+  (:keymaps 'normal :prefix "SPC"
+   "hh" 'lsp-describe-thing-at-point
+   "hd" 'lsp-find-definition
+   "hr" 'lsp-execute-code-action
+   "hs" 'lsp-signature-activate))
 
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-enable nil)
+  :general
+  (:keymaps 'normal :prefix "SPC"
+   "hu" 'lsp-ui-doc-glance))
 
 (use-package company
   :demand t
   :diminish company-mode
   :load-path "lib/"
+  :hook (evil-insert-state-exit . company-abort)
   :config
   (global-company-mode)
   ;; (company-tng-configure-default)
@@ -1628,9 +1600,6 @@ Lisp function does not specify a special indentation."
   (require 'company-simple-complete)
   (setq company-dabbrev-downcase 0
         company-idle-delay 0.2))
-
-(use-package company-lsp
-  :after company)
 
 (use-package company-statistics
   :hook (company-mode . company-statistics-mode))

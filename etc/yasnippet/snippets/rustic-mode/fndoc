@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: fndoc
+# key: //
+# --
+/// $0
