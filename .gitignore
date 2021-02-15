@@ -4,3 +4,4 @@ straight/*
 straight/versions
 company-statistics-cache.el
 .python-environments
+elpy/

@@ -1097,10 +1097,6 @@ Lisp function does not specify a special indentation."
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
   (define-key evil-multiedit-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
   (define-key evil-motion-state-map (kbd "o") 'evil-multiedit-toggle-or-restrict-region)
-  (define-key evil-multiedit-state-map (kbd "M-<right>") 'evil-multiedit-next)
-  (define-key evil-multiedit-state-map (kbd "M-<left>") 'evil-multiedit-prev)
-  (define-key evil-multiedit-insert-state-map (kbd "M-<right>") 'evil-multiedit-next)
-  (define-key evil-multiedit-insert-state-map (kbd "M-<left>") 'evil-multiedit-prev)
   :general
   (:keymaps 'normal
    "M-d" 'evil-multiedit-match-and-next
@@ -1108,16 +1104,26 @@ Lisp function does not specify a special indentation."
   (:keymaps 'visual
    "M-d" 'evil-multiedit-match-and-next
    "M-D" 'evil-multiedit-match-and-prev
-   "R" 'evil-multiedit-match-all))
+   "R" 'evil-multiedit-match-all)
+  (:keymaps '(evil-multiedit-state-map evil-multiedit-insert-state-map)
+   "M-<right>" 'evil-multiedit-next
+   "M-<left>" 'evil-multiedit-prev
+   "M-<down>" 'evil-multiedit-next
+   "M-<up>" 'evil-multiedit-prev
+   "M-n" 'evil-multiedit-next
+   "M-p" 'evil-multiedit-prev
+   (concat "M-" zz-motion-right) 'evil-multiedit-next
+   (concat "M-" zz-motion-left) 'evil-multiedit-prev
+   (concat "M-" zz-motion-down) 'evil-multiedit-next
+   (concat "M-" zz-motion-up) 'evil-multiedit-prev))
 
 (use-package whitespace
   :diminish global-whitespace-mode
   :hook ((web-mode . (lambda () (setq-local whitespace-line-column 101)))
          (java-mode . (lambda () (setq-local whitespace-line-column 100)))
          (python-mode . (lambda () (setq-local whitespace-line-column 79)))
-         (prog-mode . (lambda ()
-                        (setq-local whitespace-line-column 80)
-                        (whitespace-mode 1))))
+         (haskell-mode . (lambda () (setq-local whitespace-line-column 80)))
+         (rustic-mode . (lambda () (setq-local whitespace-line-column 100))))
   :config
   ;; TODO This function does not work well on light themes
   (defun zz-fix-whitespace ()
@@ -1624,15 +1630,14 @@ Lisp function does not specify a special indentation."
         (or (getenv "VIRTUALENVWRAPPER_PYTHON")
             (executable-find "python3"))))
 
+(use-package blacken
+  :hook (python-mode . blacken-mode))
+
 (use-package elpy
-  :commands (flycheck-mode elpy-format-code)
+  :commands flycheck-mode
   :hook ((elpy-mode . flycheck-mode) ;; TODO global-flycheck-mode does this?
-         (python-mode . (lambda ()
-                          (add-hook 'before-save-hook 'elpy-format-code
-                                    nil
-                                    'local))))
+         (python-mode . elpy-enable))
   :config
-  (elpy-enable)
   (setq elpy-rpc-backend "jedi"
         elpy-rpc-python-command "python3"
         elpy-modules (delq 'elpy-module-flymake elpy-modules)
@@ -1703,17 +1708,18 @@ plist, etc."
   (evil-set-initial-state 'org-agenda-mode 'emacs)
   (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
   (org-babel-do-load-languages 'org-babel-load-languages
-                               '((plantuml . t)
-                                 (dot . t)
-                                 (python . t)
-                                 (ruby . t)
-                                 (http . t)
+                               '((dot . t)
+                                 (sql . t)
                                  (awk . t)
-                                 (emacs-lisp . t)
+                                 (ruby . t)
+                                 (python . t)
                                  (haskell . t)
-                                 (clojure . t)))
+                                 (clojure . t)
+                                 (plantuml . t)
+                                 (emacs-lisp . t)))
   (setq org-log-done t
         org-ellipsis " ⤵"
+        org-src-preserve-indentation nil
         org-edit-src-content-indentation 0
         org-src-fontify-natively t
         org-src-tab-acts-natively t
