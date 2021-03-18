@@ -787,7 +787,11 @@ Lisp function does not specify a special indentation."
   :hook ((emacs-lisp-mode lisp-mode clojure-mode) . lispy-mode)
   :general
   (:keymaps 'lispy-mode-map-lispy :states 'insert
-   "\"" 'lispy-doublequote))
+   "\"" 'lispy-doublequote
+   zz-motion-up 'special-lispy-up
+   zz-motion-down 'special-lispy-down
+   zz-motion-right 'special-lispy-right
+   zz-motion-left 'special-lispy-left))
 
 (use-package lispyville
   :hook (lispy-mode . lispyville-mode)
@@ -1509,7 +1513,9 @@ Lisp function does not specify a special indentation."
 (use-package groovy-mode
   :mode "\\.gradle\\'")
 
-(use-package clojure-mode)
+(use-package clojure-mode
+  :custom
+  (clojure-align-forms-automatically t))
 
 (use-package flycheck-clj-kondo
   :after clojure-mode
@@ -1520,6 +1526,7 @@ Lisp function does not specify a special indentation."
 (use-package cider
   :after clojure-mode
   :demand t
+  :hook (clojure-mode . cider-mode)
   :config
   (eval-after-load 'evil-ex
     '(evil-ex-define-cmd "cid[er]"
@@ -1529,6 +1536,9 @@ Lisp function does not specify a special indentation."
                              (cider-jack-in)))))
   (add-to-list 'evil-emacs-state-modes 'cider-stacktrace-mode)
   :general
+  (:keymaps 'normal :prefix "SPC"
+   "rr" 'cider-eval-defun-at-point
+   "ri" 'cider-eval-defun-to-comment)
   (:keymaps 'cider-repl-mode-map :states 'insert
    "C-p" 'cider-repl-previous-input
    "C-n" 'cider-repl-next-input)
@@ -1578,6 +1588,7 @@ Lisp function does not specify a special indentation."
   (lsp-prefer-flymake nil)
   (lsp-signature-doc-lines 2)
   (lsp-signature-auto-activate nil)
+  (lsp-headerline-breadcrumb-enable nil)
   :general
   (:keymaps 'normal :prefix "SPC"
    "hh" 'lsp-describe-thing-at-point
