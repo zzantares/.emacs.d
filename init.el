@@ -525,9 +525,7 @@ Lisp function does not specify a special indentation."
 
     ;; Frames
     "C-w x" 'other-frame
-    "C-w f" 'make-frame-command
-
-    "M-v" 'evil-paste-after)
+    "C-w f" 'make-frame-command)
 
   (general-define-key :keymaps 'normal
     "M-s" 'evil-write
@@ -548,12 +546,10 @@ Lisp function does not specify a special indentation."
 
   (general-define-key :keymaps 'insert
     "M-s" 'zz-save-to-escape
-    "C-s" 'zz-save-to-escape
-    "M-v" 'evil-paste-after)
+    "C-s" 'zz-save-to-escape)
 
   (general-define-key :keymaps 'visual
-    "M-c" 'evil-yank
-    "M-v" 'evil-visual-paste)
+    "M-c" 'evil-yank)
 
   (general-define-key :keymaps '(minibuffer-local-map
                                  minibuffer-local-ns-map
@@ -572,12 +568,16 @@ Lisp function does not specify a special indentation."
   (add-hook 'minibuffer-setup-hook #'(lambda () (interactive) (setq gc-cons-threshold most-positive-fixnum)))
   (add-hook 'minibuffer-exit-hook #'(lambda () (interactive) (setq gc-cons-threshold 800000)))
   :general
-  (:keymaps 'minibuffer-local-map
-            "C-p" 'previous-history-element
-            "C-n" 'next-history-element
-            "C-w" 'backward-kill-word
-            "M-v" 'clipboard-yank
-            "<escape>" 'keyboard-escape-quit))
+  (:keymaps '(minibuffer-local-map
+              minibuffer-local-ns-map
+              minibuffer-local-completion-map
+              minibuffer-local-must-match-map
+              minibuffer-local-isearch-map)
+   "C-p" 'previous-history-element
+   "C-n" 'next-history-element
+   "C-w" 'backward-kill-word
+   "C-v" 'clipboard-yank
+   "<escape>" 'abort-recursive-edit))
 
 (use-package autorevert
   :straight nil
@@ -728,6 +728,7 @@ Lisp function does not specify a special indentation."
    "]c" 'smerge-next)
   (:states 'normal :prefix "SPC"
    "gs" 'magit-status
+   "gd" 'magit-diff-buffer-file
    "gS" 'zz/magit-status-with-prefix-arg
    "gco" 'zz-magit-checkout
    "gl" 'magit-log-current
@@ -1297,7 +1298,7 @@ Lisp function does not specify a special indentation."
 (use-package phpunit
   :after php-mode
   :general
-  (:keymaps 'normal :prefix "SPC"
+  (:states 'normal :keymaps 'php-mode-map :prefix "SPC"
    "rr" 'phpunit-current-test
    "rt" 'phpunit-current-class
    "ra" 'phpunit-current-project))
@@ -1539,7 +1540,8 @@ Lisp function does not specify a special indentation."
                              (cider-jack-in)))))
   (add-to-list 'evil-emacs-state-modes 'cider-stacktrace-mode)
   :general
-  (:keymaps 'normal :prefix "SPC"
+  (:states 'normal :keymaps 'cider-mode-map :prefix "SPC"
+   "rt" 'cider-eval-buffer
    "rr" 'cider-eval-defun-at-point
    "ri" 'cider-eval-defun-to-comment)
   (:keymaps 'cider-repl-mode-map :states 'insert
