@@ -1306,27 +1306,30 @@ Lisp function does not specify a special indentation."
 (use-package web-mode
   :mode ("\\.tsx\\'" "\\.blade\\.php\\'" "\\.erb\\'"
          "\\.djhtml\\'" "\\.html?\\'" "\\.html\\.eex\\'")
-  :config
-  (setq web-mode-markup-indent-offset 2
-        web-mode-code-indent-offset 2
-        web-mode-script-padding 2
-        web-mode-block-padding 2
-        web-mode-style-padding 2
-        web-mode-enable-auto-pairing t
-        web-mode-enable-auto-closing t
-        web-mode-enable-current-element-highlight t
-        web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'"))))
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-script-padding 2)
+  (web-mode-block-padding 2)
+  (web-mode-style-padding 2)
+  (web-mode-enable-auto-pairing t)
+  (web-mode-enable-auto-closing t)
+  (web-mode-enable-current-element-highlight t)
+  (web-mode-engines-alist '(("django" . ".*/python/django/.*\\.html\\'")))
+  :general
+  (:states 'normal :keymaps 'web-mode-map :prefix "SPC"
+   "rr" 'browse-url-of-buffer))
 
 (use-package rbenv
   :commands global-rbenv-mode
   :init
   (add-hook 'ruby-mode-hook 'global-rbenv-mode)
-  :config
-  (setq rbenv-show-active-ruby-in-modeline nil))
+  :custom
+  (rbenv-show-active-ruby-in-modeline nil))
 
 (use-package json-mode
-  :config
-  (setq js-indent-level 2))
+  :custom
+  (js-indent-level 2))
 
 (use-package js2-mode
   :mode "\\.js\\'"
@@ -1336,11 +1339,12 @@ Lisp function does not specify a special indentation."
                            (setq-default flycheck-disabled-checkers
                                          (append flycheck-disabled-checkers
                                                  '(javascript-jshint)))))
+  :custom
+  (js-indent-level 2)
+  (js-chain-indent t)
+  (js2-basic-offset 2)
+  (js2-strict-missing-semi-warning nil)
   :config
-  (setq-default js-indent-level 2
-                js-chain-indent t
-                js2-basic-offset 2
-                js2-strict-missing-semi-warning nil)
   (js2-imenu-extras-mode))
 
 (use-package rjsx-mode
@@ -1351,8 +1355,8 @@ Lisp function does not specify a special indentation."
   :hook ((js2-mode . prettier-js-mode)
          (rjsx-mode . prettier-js-mode)
          (typescript-mode . prettier-js-mode))
-  :config
-  (setq prettier-js-args '("--single-quote" "true")))
+  :custom
+  (prettier-js-args '("--single-quote" "true")))
 
 (use-package eslintd-fix
   :hook ((js2-mode . eslintd-fix-mode)
@@ -1373,8 +1377,8 @@ Lisp function does not specify a special indentation."
 
 (use-package typescript-mode
   :mode ("\\.ts\\'")
-  :config
-  (setq typescript-indent-level 2)
+  :custom
+  (typescript-indent-level 2)
   :general
   (:keymaps 'typescript-mode-map :states 'insert
    "RET" 'c-indent-new-comment-line))
@@ -1430,8 +1434,8 @@ Lisp function does not specify a special indentation."
          ("\\.markdown\\'" . markdown-mode))
   :init
   (setq markdown-command "pandoc")
-  :config
-  (setq markdown-gfm-use-electric-backquote nil)
+  :custom
+  (markdown-gfm-use-electric-backquote nil)
   :general
   (:keymaps 'markdown-mode-map :states 'normal
    "TAB" 'markdown-cycle))
@@ -1468,7 +1472,7 @@ Lisp function does not specify a special indentation."
 
 (use-package psc-ide
   :hook (purescript-mode . psc-ide-mode)
-  :config (setq psc-ide-editor-mode t))
+  :custom (psc-ide-editor-mode t))
 
 (use-package elm-mode
   :init
@@ -1484,8 +1488,8 @@ Lisp function does not specify a special indentation."
 (use-package reason-mode
   :hook (reason-mode . (lambda ()
                          (add-hook 'before-save-hook #'refmt-before-save nil 'local)))
-  :config
-  (setq refmt-command 'npm))
+  :custom
+  (refmt-command 'npm))
 
 (use-package fsharp-mode)
 
