@@ -6,13 +6,12 @@
 ;; TODO: Zshell is not working right.
 ;; TODO: Use evil-window-map to define the C-w mappings.
 ;; TODO: Explore evil-want-* settings.
-;; TODO: Make that if cursor is at the end M-v is paste after, otherwise is paste before.
 ;; TODO: Adopt the usage of use-package's :hook keyword.
 ;; TODO: Explore the org-mode features from https://github.com/dieggsy/dotfiles/tree/master/emacs.d
 ;; TODO: Org easy templates expansion not working with ox-reveal (https://github.com/yjwen/org-reveal/issues/323)
 ;; TODO: Add settings for disabling auto-save on .gpg files (https://www.reddit.com/r/emacs/comments/46lv2q/is_there_any_easy_way_to_make_org_files_password/d08j4fb/)
 ;; TODO: Fix the up and down motions while visually selecting a hunk in magit status mode.
-;; TODO: In haskell-mode pressing Y freezes Emacs https://github.com/expez/evil-smartparens/issues/50
+;; TODO: In haskell-mode pressing Y or C freezes Emacs https://github.com/expez/evil-smartparens/issues/50
 ;; TODO: When oppening text files or markdown files buffer loads until spell check finishes.
 ;; TODO: Fix defer issues with centered-window-mode and hide-mode-line
 ;; TODO: Try out "sebastiencs/omnibox"
@@ -979,8 +978,8 @@ Lisp function does not specify a special indentation."
     "Fix mode line appearance (useful after switching themes)."
     (require 'spaceline-config)
     (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-    (set-face-attribute 'mode-line nil :height 140 :family "Monaco")
-    (set-face-attribute 'mode-line-inactive nil :height 140 :family "Monaco")
+    (set-face-attribute 'mode-line nil :height 120 :family "Monaco")
+    (set-face-attribute 'mode-line-inactive nil :height 120 :family "Monaco")
     (spaceline-toggle-minor-modes-off))
   (zz-fix-spaceline))
 
@@ -1250,7 +1249,7 @@ Lisp function does not specify a special indentation."
 
 (use-package frame
   :straight nil
-  ;; :hook (after-init . toggle-frame-fullscreen)
+  :hook (after-init . toggle-frame-fullscreen)
   :init
   ;; no-title-bars was replaced with following setting
   (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -1870,7 +1869,6 @@ plist, etc."
 (use-package molokai-theme :no-require t)
 (use-package gruvbox-theme :no-require t)
 (use-package dracula-theme :no-require t)
-(use-package kaolin-themes :no-require t)
 (use-package base16-theme :no-require t)
 (use-package oceanic-theme :no-require t)
 (use-package material-theme :no-require t)
@@ -1892,15 +1890,19 @@ plist, etc."
 (use-package twilight-anti-bright-theme :no-require t)
 (use-package color-theme-sanityinc-tomorrow :no-require t)
 (use-package modus-vivendi-theme :no-require t)
+(use-package kaolin-themes
+  :demand t
+  :config
+  (load-theme 'kaolin-dark))
 (use-package chocolate-theme
   :straight (chocolate-theme :type git :host github :repo "SavchenkoValeriy/emacs-chocolate-theme")
   :no-require t)
 (use-package doom-themes
-  :demand t
+  :no-require t
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-old-hope)
+  ;; (load-theme 'doom-homage-black)
   (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
@@ -1934,8 +1936,7 @@ plist, etc."
 
 ;; Identation and line spacing settings
 (setq tab-stop-list (number-sequence 4 200 4))
-(setq-default ;; line-spacing 5
-              line-spacing 15
+(setq-default line-spacing 10
               indent-tabs-mode nil
               tab-width 4)
 
@@ -1943,18 +1944,21 @@ plist, etc."
 (set-face-attribute 'vertical-border nil :foreground "black")
 
 ;; Font settings
-;; (set-face-attribute 'default nil :height 200 :family "Inconsolata")
-(set-face-attribute 'default nil :height 190 :family "Consolas")
-;; (set-face-attribute 'default nil :height 170 :family "Ubuntu Mono")
-;; (set-face-attribute 'default nil :height 160 :family "Operator Mono")
-;; (set-face-attribute 'default nil :height 190 :family "Fira Code")
-;; (set-face-attribute 'default nil :height 180 :family "Hack")
-;; (set-face-attribute 'default nil :height 170 :family "Monaco")
-;; (set-face-attribute 'default nil :height 180 :family "SF Mono")
-;; (set-face-attribute 'default nil :height 170 :family "Menlo")
-;; (set-face-attribute 'default nil :height 175 :family "Roboto Mono")
+(set-frame-font "-APPL-SF Mono-semibold-normal-normal-*-*-*-*-*-m-0-iso10646-1")
+;; (set-frame-font "-APPL-SF Mono-normal-normal-normal-*-*-*-*-*-m-0-iso10646-1")
+(set-face-attribute 'default nil :height 140)
+;; (set-face-attribute 'default nil :height 150 :family "Inconsolata" :weight 'semi-bold)
+;; (set-face-attribute 'default nil :height 190 :family "Consolas")
+;; (set-face-attribute 'default nil :height 150 :family "Ubuntu Mono")
+;; (set-face-attribute 'default nil :height 150 :family "Operator Mono")
+;; (set-face-attribute 'default nil :height 150 :family "Fira Code")
+;; (set-face-attribute 'default nil :height 150 :family "Hack")
+;; (set-face-attribute 'default nil :height 150 :family "Monaco for Powerline Plus Nerd File Types")
+;; (set-face-attribute 'default nil :height 150 :family "SF Mono")
+;; (set-face-attribute 'default nil :height 145 :family "Menlo for Powerline Plus Nerd File Types")
+;; (set-face-attribute 'default nil :height 150 :family "Roboto Mono")
 ;; (set-face-attribute 'default nil :height 180 :family "Fantasque Sans Mono")
-;; (set-face-attribute 'default nil :height 180 :family "Fira Mono")
+;; (set-face-attribute 'default nil :height 150 :family "Fira Mono")
 
 ;; Only applies to Yamamoto Mitsuharu's patch
 (when (boundp 'mac-carbon-version-string)
