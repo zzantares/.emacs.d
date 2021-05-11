@@ -450,6 +450,11 @@ Lisp function does not specify a special indentation."
     (add-to-list 'exec-path-from-shell-variables envvar))
   (exec-path-from-shell-initialize))
 
+(use-package restart-emacs
+  :commands restart-emacs
+  :custom
+  (restart-emacs-restore-frames t))
+
 (use-package diminish)
 
 (use-package general
@@ -1457,6 +1462,10 @@ Lisp function does not specify a special indentation."
   :hook (emacs-lisp-mode . (lambda ()
                              (setq-local lisp-indent-function #'zz-lisp-indent-function))))
 
+(use-package haskell-mode
+  :hook (haskell-mode . (lambda ()
+                          (evil-smartparens-mode -1))))
+
 (use-package lsp-haskell
   :after lsp
   :demand t
@@ -1494,7 +1503,7 @@ Lisp function does not specify a special indentation."
 (use-package fsharp-mode)
 
 (use-package scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$"
+  :mode "\\.\\(scala\\|sbt\\|sc\\)\\'"
   :hook (scala-mode . (lambda ()
                         (evil-smartparens-mode -1)
                         (add-hook 'before-save-hook 'lsp-format-buffer nil 'local))))
@@ -1565,7 +1574,7 @@ Lisp function does not specify a special indentation."
 (use-package solidity-mode)
 
 (use-package nix-mode
-  :mode ("\\.nix$" . nix-mode))
+  :mode ("\\.nix\\'" . nix-mode))
 
 (use-package rustic
   :mode ("\\.rs\\'" . rustic-mode)
@@ -1639,6 +1648,10 @@ Lisp function does not specify a special indentation."
   (add-hook 'go-mode-hook '(lambda ()
                              (set (make-local-variable 'company-backends) '(company-go))
                              (company-mode t))))
+
+(use-package direnv
+  :init
+  (direnv-mode))
 
 (use-package pyvenv
   :config
@@ -1742,11 +1755,11 @@ plist, etc."
         org-html-htmlize-output-type 'css
         org-todo-keywords '((sequence "TODO" "IN-PROGRESS"
                                       "|" "DONE" "DELEGATED" "CANCELED"))
-        org-agenda-files (list "~/Documents/org/free.org"
-                               "~/Documents/org/paid.org"
-                               "~/Documents/org/working.org"
-                               "~/Documents/org/projects.org"
-                               "~/Documents/org/todo.org")
+        org-agenda-files (list "~/Documents/notes/org/free.org"
+                               "~/Documents/notes/org/paid.org"
+                               "~/Documents/notes/org/working.org"
+                               "~/Documents/notes/org/projects.org"
+                               "~/Documents/notes/org/todo.org")
         org-babel-clojure-backend 'cider)
   :general
   (:keymaps 'normal :prefix "SPC"
